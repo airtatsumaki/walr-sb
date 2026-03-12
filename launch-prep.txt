@@ -1,4 +1,3 @@
-
 1) set all dummies/ HID_ to sys_range c
 2) hide all HID_JS_ dummies with css and ensure $('next').click() is active
 3) double check quota counts and quota stops
