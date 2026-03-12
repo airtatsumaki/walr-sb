@@ -1,0 +1,23 @@
+
+1) set all dummies/ HID_ to sys_range c
+2) hide all HID_JS_ dummies with css and ensure $('next').click() is active
+3) double check quota counts and quota stops
+4) Hide back button (build > settings > hide back button)
+5) Publish survey, generate links as below
+     - dcv1 survey live link (end):
+     - <LINK>?P0=[%PlatformID%]&altid=[%RID%]
+     - 
+     - dcv2 survey test link (end):
+     - Test link - <LINK>?P0=[%PlatformID%]&altid=[%RID%]&t=1 
+     - Live link - <LINK>?P0=[%PlatformID%]&altid=[%RID%]
+6) Test one complete of the live link, note the ID for removal
+7) Send links to PM team
+8) PM to test and report back the used IDs
+9) export survey data > ... > export > Miprox
+10) get respid and set Status to 'ARCHIVED' save as excel
+11) import data > ... > edit data > file from 10)
+
+
+
+
+
