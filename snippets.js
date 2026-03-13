@@ -46,3 +46,10 @@ ul.numeric-input-question-answers-container li.answer-container{
   visibility: hidden !important;
 }
 */
+
+//css hide N/A for a given slider (this example is 1st slider)
+/*
+#slider-holder0 #opt-out-container-0{
+    visibility: hidden;
+}
+*/
