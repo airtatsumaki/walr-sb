@@ -34,6 +34,14 @@ function pageReady() {
 }
 
 //css for OE left align:
+//dcv1
+/*
+.cCellRowText{
+    display: none;
+}
+*/
+
+//dcv2
 /*
 ul.numeric-input-question-answers-container li.answer-container{
     flex-direction: row-reverse;
