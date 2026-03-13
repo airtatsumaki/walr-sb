@@ -39,3 +39,10 @@ ul.numeric-input-question-answers-container li.answer-container{
     flex-direction: row-reverse;
 }
 */
+
+//css to hide HID_JS_ dummy
+/*
+#QID, .buttonContainer{
+  visibility: hidden !important;
+}
+*/
