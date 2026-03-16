@@ -1,0 +1,21 @@
+/*css for OE left align:*/
+/*dcv1*/
+.cCellRowText {
+  display: none;
+}
+
+/*dcv2*/
+ul.numeric-input-question-answers-container li.answer-container {
+  flex-direction: row-reverse;
+}
+
+/*css to hide HID_JS_ dummy*/
+#QID,
+.buttonContainer {
+  visibility: hidden !important;
+}
+
+/*css hide N/A for a given slider (this example is 1st slider)*/
+#slider-holder0 #opt-out-container-0 {
+  visibility: hidden;
+}

@@ -12,8 +12,8 @@
 6) Test one complete of the live link, note the ID for removal
 7) Send links to PM team
 8) PM to test and report back the used IDs
-9) export survey data > ... > export > Miprox
-10) get respid and set Status to 'ARCHIVED' save as excel
+9) create data set > select status's, export dataset as Excel
+10) get 'respid' and set 'Status' to 'ARCHIVED' save as Excel
 11) import data > ... > edit data > file from 10)
 
 

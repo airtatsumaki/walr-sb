@@ -5,8 +5,13 @@ checkboxes.forEach((input) => {
   input.checked = false;
 });
 
-//get piped elements
-var piped = Array.from(document.querySelectorAll(".cRef"));
+//get piped elements datacodes
+var pipedCodes = [
+  ...document
+    .querySelectorAll(".cRef")
+    .map((item) => item.getAttribute("data-value")),
+];
+//var piped = Array.from(document.querySelectorAll(".cRef"));
 
 //loop over piped elements, set an input to true
 Array.from(document.querySelectorAll(".cRef")).forEach((element) => {
@@ -32,32 +37,3 @@ function pageReady() {
     $(".main-next-button").click();
   }, 200);
 }
-
-//css for OE left align:
-//dcv1
-/*
-.cCellRowText{
-    display: none;
-}
-*/
-
-//dcv2
-/*
-ul.numeric-input-question-answers-container li.answer-container{
-    flex-direction: row-reverse;
-}
-*/
-
-//css to hide HID_JS_ dummy
-/*
-#QID, .buttonContainer{
-  visibility: hidden !important;
-}
-*/
-
-//css hide N/A for a given slider (this example is 1st slider)
-/*
-#slider-holder0 #opt-out-container-0{
-    visibility: hidden;
-}
-*/
