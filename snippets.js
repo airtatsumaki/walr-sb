@@ -6,6 +6,14 @@ checkboxes.forEach((input) => {
 });
 
 //get piped elements datacodes
+//dcv1 requires splitting data-code by ';'
+//wrap the pipe in a <span id='QID'></span> set css on this id to display: none;
+var pipedCodes = document
+  .querySelector("#MYSPAN .cRef")
+  .getAttribute("data-code")
+  .split(";");
+
+//dcv2
 var pipedCodes = [
   ...document
     .querySelectorAll(".cRef")

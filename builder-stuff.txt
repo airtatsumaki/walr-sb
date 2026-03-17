@@ -1,0 +1,9 @@
+Masking out Codes between SC questions
+dcv1
+(!\Q1.a)
+
+dvc2 - untill fixed
+(*)&(!\Q1.a)
+
+Masking and setting min/max
+(#1:3)&(\Q1.a)
