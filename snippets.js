@@ -100,3 +100,48 @@ function pageReady() {
     });
   });
 }
+
+//force all OE's in multiple OE to be answered
+//dcv1
+<span id="myerror">Please provide a response for each box</span>;
+
+function validate() {
+  var answered = 0;
+  var errorText = document.querySelector("#myerror");
+  var inputs = [...document.querySelectorAll(".cTextInput")];
+  inputs.forEach((oe) => {
+    if (oe.value.length > 0) {
+      answered++;
+    }
+  });
+
+  if (answered != inputs.length) {
+    console.log("error");
+    errorText.style.display = "block";
+  } else {
+    errorText.style.display = "none";
+    return true;
+  }
+}
+
+//dcv2
+<span id="myerror">Please provide a response for each box</span>;
+
+function validate() {
+  var answered = 0;
+  var errorText = document.querySelector("#myerror");
+  var inputs = [...document.querySelectorAll(".open-end-input")];
+  inputs.forEach((oe) => {
+    if (oe.value.length > 0) {
+      answered++;
+    }
+  });
+
+  if (answered != inputs.length) {
+    console.log("error");
+    errorText.style.display = "block";
+  } else {
+    errorText.style.display = "none";
+    return true;
+  }
+}
