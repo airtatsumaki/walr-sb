@@ -1,5 +1,5 @@
 //get all checkboxes
-var checkboxes = Array.from(document.querySelectorAll(".cCheck"));
+var checkboxes = [...document.querySelectorAll(".cCheck")];
 //loop over checkboxes, clear them
 checkboxes.forEach((input) => {
   input.checked = false;
@@ -19,31 +19,42 @@ var pipedCodes = [
     .querySelectorAll(".cRef")
     .map((item) => item.getAttribute("data-value")),
 ];
-//var piped = Array.from(document.querySelectorAll(".cRef"));
 
 //loop over piped elements, set an input to true
-Array.from(document.querySelectorAll(".cRef")).forEach((element) => {
+
+[...document.querySelectorAll(".cRef")].forEach((element) => {
   if (1 == 1) {
     //input.checked = true;
   }
 });
 
 //loop over pipes and inputs to punch
+//dvc1
 function pageReady() {
-  var checkboxes = Array.from(document.querySelectorAll(".cCheck"));
-  Array.from(document.querySelectorAll(".cRef")).forEach((element) => {
-    checkboxes.forEach((input) => {
-      if (
-        parseInt(element.getAttribute("data-code")) ==
-        parseInt(input.getAttribute("value"))
-      ) {
-        input.checked = true;
-      }
-    });
+  const codes = document
+    .querySelector("#qmc .cRef")
+    .getAttribute("data-code")
+    .split(";")
+    .map(Number);
+
+  document.querySelectorAll(".cCheck").forEach((input) => {
+    input.checked = codes.includes(+input.value);
   });
-  setTimeout(function () {
-    $(".main-next-button").click();
-  }, 200);
+
+  //setTimeout(() => $(".main-next-button").click(), 200);
+}
+
+//dvc2
+function pageReady() {
+  const codes = [...document.querySelectorAll(".cRef")].map(
+    (el) => +el.dataset.code,
+  );
+
+  document.querySelectorAll(".cCheck").forEach((input) => {
+    input.checked = codes.includes(+input.value);
+  });
+
+  setTimeout(() => $(".main-next-button").click(), 200);
 }
 
 //make a column exclusive in a SC per row grid
