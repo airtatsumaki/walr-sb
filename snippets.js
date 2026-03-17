@@ -41,7 +41,7 @@ function pageReady() {
     input.checked = codes.includes(+input.value);
   });
 
-  //setTimeout(() => $(".main-next-button").click(), 200);
+  setTimeout(() => $(".buttonNext").click(), 200);
 }
 
 //dvc2
