@@ -12,9 +12,10 @@
 6) Test one complete of the live link, note the ID for removal
 7) Send links to PM team
 8) PM to test and report back the used IDs
-9) create data set > select status's, export dataset as Excel
+9a) create data set > select status's, export dataset as Excel
+9b) export status's - ... > status report
 10) get 'respid' and set 'Status' to 'ARCHIVED' save as Excel
-11) import data > ... > edit data > file from 10)
+11) import data - ... > edit data > file from 10)
 
 
 
