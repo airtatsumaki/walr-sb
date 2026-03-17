@@ -48,7 +48,7 @@ function pageReady() {
 //dvc2
 function pageReady() {
   const codes = [...document.querySelectorAll(".cRef")].map(
-    (el) => +el.dataset.code,
+    (el) => +el.getAttribute("data-code"),
   );
 
   document.querySelectorAll(".cCheck").forEach((input) => {
