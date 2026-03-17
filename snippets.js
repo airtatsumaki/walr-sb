@@ -1,8 +1,9 @@
-//get all checkboxes
-var checkboxes = [...document.querySelectorAll(".cCheck")];
+//get all checkboxes/ radio inputs
+var inputs = [...document.querySelectorAll(".cCheck")];
+var inputs = [...document.querySelectorAll(".cRadio")];
 //loop over checkboxes, clear them
-checkboxes.forEach((input) => {
-  input.checked = false;
+inputs.forEach((item) => {
+  item.checked = false;
 });
 
 //get piped elements datacodes
