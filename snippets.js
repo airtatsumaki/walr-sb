@@ -45,3 +45,46 @@ function pageReady() {
     $(".main-next-button").click();
   }, 200);
 }
+
+//make a column exclusive in a SC per row grid
+//dcv1
+function pageReady() {
+  const exclusiveColumnIndex = 0; // 0-based (0=1st, 1=2nd, 2=3rd)
+
+  const targetColRadios = [...document.querySelectorAll(".rsRow")]
+    .map((row) => row.querySelectorAll(".cRadio")[exclusiveColumnIndex])
+    .filter(Boolean); // removes undefined if some rows are shorter
+
+  targetColRadios.forEach((radio) => {
+    radio.addEventListener("change", function () {
+      if (!this.checked) return;
+
+      targetColRadios.forEach((r) => {
+        if (r !== this) {
+          r.checked = false;
+        }
+      });
+    });
+  });
+}
+
+//dcv2
+function pageReady() {
+  const exclusiveColumnIndex = 0; // 0-based (0=1st, 1=2nd, 2=3rd)
+
+  const targetColRadios = [...document.querySelectorAll(".answer-row")]
+    .map((row) => row.querySelectorAll(".cRadio")[exclusiveColumnIndex])
+    .filter(Boolean); // removes undefined if some rows are shorter
+
+  targetColRadios.forEach((radio) => {
+    radio.addEventListener("change", function () {
+      if (!this.checked) return;
+
+      targetColRadios.forEach((r) => {
+        if (r !== this) {
+          r.checked = false;
+        }
+      });
+    });
+  });
+}
