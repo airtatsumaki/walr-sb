@@ -1,0 +1,11 @@
+1) Add in the new/ required quotas
+2) Add in the new quota stops, redirects, text
+3) Test and Publish the survey
+4) Create a new dataset for completes, ... > create new data set > completes 
+5) Export the data set as an Excel file
+6) Replace all underscores (_) with full-stops/ periods (.) in the quota QID's (QuotaQ1_A_1, would be QuotaQ1.A.1)
+7) Replace all '0's in the quota variables with blanks
+8) And 1's into the correct .A and .B variables as Number formatted values
+9) Save the file
+10) Upload the file from 9), ... > Import data
+11) the log should confirm qutoas are updated for each respondent
