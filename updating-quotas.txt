@@ -8,4 +8,4 @@
 8) And 1's into the correct .A and .B variables as Number formatted values
 9) Save the file
 10) Upload the file from 9), ... > Import data
-11) the log should confirm qutoas are updated for each respondent
+11) The log should confirm qutoas are updated for each respondent

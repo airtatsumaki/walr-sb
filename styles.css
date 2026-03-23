@@ -25,3 +25,11 @@ ul.numeric-input-question-answers-container li.answer-container {
 #slider-holder0 #opt-out-container-0 {
   visibility: hidden;
 }
+
+/* qa-codes styling*/
+.qa-code {
+  color: blue;
+  font-size: larger;
+  font-weight: bolder;
+  padding: 0px 5px 0px 0px;
+}

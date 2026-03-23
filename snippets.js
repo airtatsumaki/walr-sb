@@ -145,3 +145,96 @@ function validate() {
     return true;
   }
 }
+
+//show radio button/ checkbox precodes. Place this in template advanced settings
+//will only work if &codes=1 is added to the test link
+//dcv2
+function pageReady() {
+  applyQACodes();
+
+  const observer = new MutationObserver(() => {
+    observer.disconnect();
+    applyQACodes();
+    observer.observe(document.body, { childList: true, subtree: true });
+  });
+
+  observer.observe(document.body, { childList: true, subtree: true });
+}
+
+function applyQACodes() {
+  if (document.querySelector(".qa-code")) return;
+
+  var radios = [...document.querySelectorAll(".cRadio")];
+  var checkboxes = [...document.querySelectorAll(".cCheck")];
+  var gridColumnHeaders = [
+    ...document.querySelectorAll("th.answer-text-cell[id^='answerCol-']"),
+  ];
+  var gridRowHeaders = [
+    ...document.querySelectorAll("tr.answer-row[id^='answerRow-']"),
+  ];
+
+  // --- Question ID labels ---
+  var questionText = [...document.querySelectorAll(".question-container[id]")];
+  questionText.forEach((question) => {
+    const value = question.getAttribute("id");
+    const span = document.createElement("span");
+    span.className = "qa-code";
+    span.textContent = `[${value}]`;
+    question.prepend(span);
+  });
+
+  // --- Radio / Checkbox questions ---
+  var inputsToUse =
+    checkboxes.length > 0 ? checkboxes : radios.length > 0 ? radios : [];
+  inputsToUse.forEach((input) => {
+    const value = input.getAttribute("value");
+    const ansText = input
+      .closest(".answer-input-and-text-wrapper")
+      ?.querySelector(".ansText-Regular");
+    if (ansText) {
+      const p = ansText.querySelector("p");
+      const span = document.createElement("span");
+      span.className = "qa-code";
+      span.textContent = `[${value}]`;
+      if (p) {
+        p.prepend(span);
+      } else {
+        ansText.prepend(span);
+      }
+    }
+  });
+
+  // --- Grid column headers ---
+  gridColumnHeaders.forEach((th) => {
+    const value = th.id.split("-").pop();
+    const ansText = th.querySelector(".answerText-Regular");
+    if (ansText) {
+      const p = ansText.querySelector("p");
+      const span = document.createElement("span");
+      span.className = "qa-code";
+      span.textContent = `[${value}]`;
+      if (p) {
+        p.prepend(span);
+      } else {
+        ansText.prepend(span);
+      }
+    }
+  });
+
+  // --- Grid row headers ---
+  gridRowHeaders.forEach((tr) => {
+    const value = tr.id.split("-").pop();
+    const statText = tr.querySelector(".statementText-Regular");
+    if (statText) {
+      const p = statText.querySelector("p");
+      const span = document.createElement("span");
+      span.className = "qa-code";
+      span.textContent = `[${value}]`;
+      if (p) {
+        p.prepend(span);
+      } else {
+        statText.prepend(span);
+      }
+    }
+  });
+}
