@@ -148,17 +148,21 @@ function validate() {
 
 //show radio button/ checkbox precodes. Place this in template advanced settings
 //will only work if &codes=1 is added to the test link
+//cannot work on carousels as the statements do not contain any precode values in their DOM elements
 //dcv2
 function pageReady() {
-  applyQACodes();
-
-  const observer = new MutationObserver(() => {
-    observer.disconnect();
+  let params = new URLSearchParams(document.location.search);
+  if (params.get("qa") == 1) {
     applyQACodes();
-    observer.observe(document.body, { childList: true, subtree: true });
-  });
 
-  observer.observe(document.body, { childList: true, subtree: true });
+    const observer = new MutationObserver(() => {
+      observer.disconnect();
+      applyQACodes();
+      observer.observe(document.body, { childList: true, subtree: true });
+    });
+
+    observer.observe(document.body, { childList: true, subtree: true });
+  }
 }
 
 function applyQACodes() {
@@ -184,8 +188,7 @@ function applyQACodes() {
   });
 
   // --- Radio / Checkbox questions ---
-  var inputsToUse =
-    checkboxes.length > 0 ? checkboxes : radios.length > 0 ? radios : [];
+  var inputsToUse = [...checkboxes, ...radios];
   inputsToUse.forEach((input) => {
     const value = input.getAttribute("value");
     const ansText = input
