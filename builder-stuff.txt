@@ -1,3 +1,8 @@
+least fill script
+dcv1
+script:lf(hFinal,\hAvail.a,N,\@sys_random)
+where N is the number of options to select
+
 Masking out Codes between SC questions
 dcv1
 (!\Q1.a)
