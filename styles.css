@@ -33,3 +33,36 @@ ul.numeric-input-question-answers-container li.answer-container {
   font-weight: bolder;
   padding: 0px 5px 0px 0px;
 }
+
+/* wistia audio player, change div height and hide seek bar*/
+/* dcv1 */
+/* Force overall player height */
+.vid-player-holder {
+  max-height: 100px;
+}
+
+/* Kill the responsive padding trick */
+.vid-player-holder .wistia_responsive_padding {
+  height: 100px !important;
+  padding: 0 !important;
+}
+
+/* Force wrapper to respect height */
+.vid-player-holder .wistia_responsive_wrapper {
+  height: 100% !important;
+}
+
+/* Force actual player */
+.vid-player-holder .wistia_embed {
+  height: 100% !important;
+}
+
+/* Optional: ensure inner chrome fills properly */
+.vid-player-holder .w-video-wrapper,
+.vid-player-holder .w-ui-container {
+  height: 100% !important;
+}
+
+.wistia_embed [data-handle="audioPlaybar"] {
+  display: none !important;
+}
