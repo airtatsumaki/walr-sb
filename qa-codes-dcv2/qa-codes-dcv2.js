@@ -1,3 +1,5 @@
+//served via https://raw.githack.com/
+
 let lastQuestionId = null;
 
 pageReady();
