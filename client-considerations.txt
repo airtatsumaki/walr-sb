@@ -1,0 +1,1 @@
+For Bam, Where there is any followup questions based on a selection (LF's pick 1 etc) best to always put the questions in a loop based on the selection dummy. This make's it easier for DP
