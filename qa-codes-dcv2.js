@@ -1,6 +1,6 @@
 let lastQuestionId = null;
 
-pageReady();
+//pageReady();
 
 function pageReady() {
   let params = new URLSearchParams(document.location.search);
