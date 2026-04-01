@@ -296,6 +296,18 @@ function answerForMe() {
       pick.dispatchEvent(new Event("change", { bubbles: true }));
     }
 
+    // --- Numeric ---
+  } else if (isNumeric) {
+    [...document.querySelectorAll(".numeric-decimal-input")].forEach(
+      (input) => {
+        const value = Math.floor(Math.random() * 99) + 1;
+        input.value = value;
+        input.dispatchEvent(new Event("input", { bubbles: true }));
+        input.dispatchEvent(new Event("change", { bubbles: true }));
+      },
+    );
+    return;
+
     // --- Open End only ---
   } else {
     const openEnds = [...document.querySelectorAll("textarea.open-end-input")];
