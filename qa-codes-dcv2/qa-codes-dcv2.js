@@ -121,6 +121,64 @@ function applyQACodes() {
       else statText.prepend(span);
     }
   });
+
+  // --- Carousel custom question ---
+  const canvases = [...document.querySelectorAll(".custom-question-canvas")];
+
+  canvases.forEach((canvas) => {
+    const carouselObserver = new MutationObserver(() => {
+      const buttons = [...canvas.querySelectorAll('[class*="answer-button-"]')];
+      if (buttons.length === 0) return;
+
+      // --- Answer option codes ---
+      buttons.forEach((btn) => {
+        const classList = [...btn.classList];
+        const indexClass = classList.find((c) =>
+          c.match(/^answer-button-\d+$/),
+        );
+        if (!indexClass) return;
+
+        const index = parseInt(indexClass.split("-").pop(), 10) + 1;
+        const ansText = btn.querySelector(".answerText-Regular");
+        if (!ansText) return;
+        if (ansText.querySelector(".qa-code")) return;
+
+        const p = ansText.querySelector("p");
+        const span = document.createElement("span");
+        span.className = "qa-code";
+        span.textContent = `[${index}]`;
+        if (p) p.prepend(span);
+        else ansText.prepend(span);
+      });
+
+      // --- Current statement code ---
+      const answerBox = canvas.querySelector("#answer-box .answerText-Regular");
+      if (answerBox && !answerBox.querySelector(".qa-code")) {
+        const statementText = answerBox.querySelector("p")?.textContent?.trim();
+
+        // match against base grid row headers to find the value
+        const matchingRow = [
+          ...document.querySelectorAll("tr.answer-row"),
+        ].find((row) => {
+          const rowText = row
+            .querySelector(".statementText-Regular p")
+            ?.textContent?.trim();
+          return rowText && statementText && rowText.includes(statementText);
+        });
+
+        if (matchingRow) {
+          const value = matchingRow.id.split("-").pop();
+          const p = answerBox.querySelector("p");
+          const span = document.createElement("span");
+          span.className = "qa-code";
+          span.textContent = `[${value}]`;
+          if (p) p.prepend(span);
+          else answerBox.prepend(span);
+        }
+      }
+    });
+    carouselObserver.observe(canvas, { childList: true, subtree: true });
+  });
 }
 
 function addAnswerForMeButton() {
