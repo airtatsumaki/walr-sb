@@ -247,6 +247,7 @@ function answerForMe() {
   const isMulti = document.querySelector(".multi-question");
   const isSingle = document.querySelector(".single-question");
   const isSingleGrid = document.querySelector(".single-grid-question");
+  const isNumeric = document.querySelector(".numeric-input-question");
 
   // --- Grid (single per row) ---
   if (isSingleGrid) {
