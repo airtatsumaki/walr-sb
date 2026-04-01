@@ -179,6 +179,26 @@ function applyQACodes() {
     });
     carouselObserver.observe(canvas, { childList: true, subtree: true });
   });
+
+  // --- Numeric question rows ---
+  const numericQuestion = [
+    ...document.querySelectorAll(".numeric-input-question .answer-container"),
+  ];
+
+  numericQuestion.forEach((container) => {
+    const value = parseInt(container.id.split("-").pop(), 10) + 1;
+    const ansText = container.querySelector(".ansText-Regular");
+    if (!ansText) return;
+    if (ansText.querySelector(".qa-code")) return;
+
+    const p = ansText.querySelector("p");
+    const span = document.createElement("span");
+    span.className = "qa-code";
+    span.textContent = `[${value}]`;
+
+    if (p) p.prepend(span);
+    else ansText.prepend(span);
+  });
 }
 
 function addAnswerForMeButton() {
