@@ -308,8 +308,7 @@ function answerForMe() {
       },
     );
     return;
-
-    // --- Open End only ---
+    // --- Open end only ---
   } else {
     const openEnds = [...document.querySelectorAll("textarea.open-end-input")];
 
@@ -356,3 +355,294 @@ function answerForMe() {
     oe.dispatchEvent(new Event("change", { bubbles: true }));
   });
 }
+
+/****************SIDE BAR ANSWERS*****************/
+// ===============================
+// QA ANSWER HISTORY (FINAL)
+// ===============================
+(function () {
+  const params = new URLSearchParams(document.location.search);
+  if (params.get("qa") != 1) return;
+
+  if (window.qaHistoryInitialized) return;
+  window.qaHistoryInitialized = true;
+
+  window.qaAnswerHistory = window.qaAnswerHistory || [];
+
+  // ===============================
+  // CAROUSEL CAPTURE (NEW)
+  // ===============================
+  function captureCarousel(question) {
+    const canvas = question.querySelector(".custom-question-canvas");
+    if (!canvas) return [];
+
+    const answers = [];
+
+    const statementEl = canvas.querySelector(
+      "#answer-box .answerText-Regular p",
+    );
+    const selectedBtn = canvas.querySelector(".answer-button.button-selected");
+
+    if (!statementEl || !selectedBtn) return [];
+
+    const statementValue = statementEl
+      .querySelector(".qa-code")
+      ?.innerText.replace(/\[|\]/g, "");
+
+    const statementText = statementEl.innerText.replace(/^\[.*?\]/, "").trim();
+
+    const answerTextEl = selectedBtn.querySelector(".answerText-Regular p");
+
+    const answerValue = answerTextEl
+      ?.querySelector(".qa-code")
+      ?.innerText.replace(/\[|\]/g, "");
+
+    const answerText = answerTextEl?.innerText.replace(/^\[.*?\]/, "").trim();
+
+    if (statementValue && answerValue) {
+      answers.push(
+        `[${statementValue}] ${statementText} = ${answerText} [${answerValue}]`,
+      );
+    }
+
+    return answers;
+  }
+
+  // ===============================
+  // CAPTURE ANSWERS
+  // ===============================
+  function captureCurrentAnswers() {
+    const questions = [...document.querySelectorAll(".question-container[id]")];
+
+    questions.forEach((question) => {
+      const qid = question.getAttribute("id");
+      const entry = { qid, answers: [] };
+
+      // =========================
+      // SC / MC
+      // =========================
+      const checked = [
+        ...question.querySelectorAll(".cRadio:checked, .cCheck:checked"),
+      ];
+
+      if (checked.length) {
+        const formatted = checked.map((input) => {
+          const value = input.getAttribute("value");
+
+          const label =
+            input
+              .closest(".answer-input-and-text-wrapper")
+              ?.querySelector(".ansText-Regular p")
+              ?.innerText.replace(/^\[.*?\]/, "")
+              .trim() || "";
+
+          return `[${value}] ${label}`;
+        });
+
+        entry.answers.push(formatted.join(", "));
+      }
+
+      // =========================
+      // GRID (UPDATED)
+      // =========================
+      [...question.querySelectorAll(".answer-row")].forEach((row) => {
+        const checked = row.querySelector(".cRadio:checked");
+        if (!checked) return;
+
+        const statementValue = row
+          .querySelector(".qa-code")
+          ?.innerText.replace(/\[|\]/g, "");
+
+        const rowLabel = row
+          .querySelector(".statementText-Regular p")
+          ?.innerText.replace(/^\[.*?\]/, "")
+          .trim();
+
+        const colHeader = question
+          .querySelector(
+            `th.answer-text-cell[id$="-${checked.value}"] .answerText-Regular p`,
+          )
+          ?.innerText.replace(/^\[.*?\]/, "")
+          .trim();
+
+        entry.answers.push(
+          `[${statementValue}] ${rowLabel} = ${colHeader} [${checked.value}]`,
+        );
+      });
+
+      // =========================
+      // NUMERIC (FIXED INDEX)
+      // =========================
+      [...question.querySelectorAll(".numeric-decimal-input")].forEach(
+        (input, index) => {
+          if (input.value === "") return;
+
+          const valueKey = parseInt(input.name.split("-").pop(), 10);
+
+          const label = question
+            .querySelector(
+              `#answerContainer-${input.name.split("-").slice(1).join("-")} .ansText-Regular p`,
+            )
+            ?.innerText.replace(/^\[.*?\]/, "")
+            .trim();
+
+          entry.answers.push(
+            `[${valueKey}] ${label || `Row ${valueKey}`} = ${input.value}`,
+          );
+        },
+      );
+
+      // =========================
+      // OPEN END
+      // =========================
+      [...question.querySelectorAll("textarea.open-end-input")].forEach(
+        (oe) => {
+          if (oe.value.trim() === "") return;
+
+          const label = oe
+            .closest(".answer-container")
+            ?.querySelector(".ansText-Regular p")
+            ?.innerText.replace(/^\[.*?\]/, "")
+            .trim();
+
+          entry.answers.push(`${label || "Response"}: "${oe.value.trim()}"`);
+        },
+      );
+
+      // =========================
+      // CAROUSEL (NEW FIX)
+      // =========================
+      const carouselAnswers = captureCarousel(question);
+
+      carouselAnswers.forEach((a) => {
+        if (!entry.answers.includes(a)) {
+          entry.answers.push(a);
+        }
+      });
+
+      if (entry.answers.length === 0) return;
+
+      const existingIndex = window.qaAnswerHistory.findIndex(
+        (e) => e.qid === qid,
+      );
+
+      if (existingIndex > -1) {
+        window.qaAnswerHistory[existingIndex] = entry;
+      } else {
+        window.qaAnswerHistory.push(entry);
+      }
+    });
+
+    renderSidebar();
+  }
+
+  // ===============================
+  // SIDEBAR UI
+  // ===============================
+  function renderSidebar() {
+    const list = document.getElementById("qa-history-list");
+    if (!list) return;
+
+    if (window.qaAnswerHistory.length === 0) {
+      list.innerHTML =
+        '<p style="color: var(--qa-muted); font-size: 16px;">No answers captured yet.</p>';
+      return;
+    }
+
+    list.innerHTML = window.qaAnswerHistory
+      .map(
+        (entry) => `
+      <div class="qa-history-entry">
+        <div class="qa-history-qid">${entry.qid}</div>
+        ${entry.answers
+          .map((a) => `<div class="qa-history-answer">${a}</div>`)
+          .join("")}
+      </div>
+    `,
+      )
+      .join("");
+  }
+
+  function buildHistorySidebar() {
+    if (document.getElementById("qa-sidebar")) return;
+
+    const toggleBtn = document.createElement("button");
+    toggleBtn.id = "qa-toggle-btn";
+    toggleBtn.innerHTML = `
+  <svg viewBox="0 0 24 24" width="24" height="24" aria-hidden="true">
+    <line x1="4" y1="6" x2="20" y2="6" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+    <line x1="4" y1="12" x2="20" y2="12" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+    <line x1="4" y1="18" x2="20" y2="18" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+  </svg>
+`;
+    const sidebar = document.createElement("div");
+    sidebar.id = "qa-sidebar";
+    sidebar.innerHTML = `<div id="qa-history-list"></div>`;
+
+    toggleBtn.addEventListener("click", () => {
+      captureCurrentAnswers();
+      sidebar.classList.toggle("open");
+    });
+
+    document.body.appendChild(toggleBtn);
+    document.body.appendChild(sidebar);
+  }
+
+  // ===============================
+  // NEXT BUTTON HOOK
+  // ===============================
+  function initNextButtonWatcher() {
+    const observer = new MutationObserver(() => {
+      const nextBtn = document.querySelector(".main-next-button");
+
+      if (!nextBtn || nextBtn.dataset.qaHooked) return;
+
+      nextBtn.dataset.qaHooked = "true";
+
+      nextBtn.addEventListener(
+        "click",
+        () => {
+          captureCurrentAnswers();
+        },
+        true,
+      );
+    });
+
+    observer.observe(document.body, {
+      childList: true,
+      subtree: true,
+    });
+  }
+
+  // ===============================
+  // GLOBAL CLICK WATCHER (CRITICAL FIX)
+  // ===============================
+  function initClickWatcher() {
+    document.addEventListener(
+      "click",
+      (e) => {
+        if (
+          e.target.closest(".answer-button") || // carousel
+          e.target.matches(".cRadio, .cCheck, .numeric-decimal-input")
+        ) {
+          setTimeout(() => {
+            captureCurrentAnswers();
+          }, 0);
+        }
+      },
+      true,
+    );
+  }
+
+  // ===============================
+  // INIT
+  // ===============================
+  function init() {
+    buildHistorySidebar();
+    initNextButtonWatcher();
+    initClickWatcher(); // <-- THIS is the missing piece
+    console.log("QA History Enabled");
+  }
+
+  init();
+})();
