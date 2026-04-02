@@ -477,7 +477,7 @@ function answerForMe() {
         (input, index) => {
           if (input.value === "") return;
 
-          const valueKey = parseInt(input.name.split("-").pop(), 10);
+          const valueKey = parseInt(input.name.split("-").pop(), 10) + 1;
 
           const label = question
             .querySelector(
