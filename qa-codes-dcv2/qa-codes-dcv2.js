@@ -577,7 +577,12 @@ function answerForMe() {
 `;
     const sidebar = document.createElement("div");
     sidebar.id = "qa-sidebar";
-    sidebar.innerHTML = `<div id="qa-history-list"></div>`;
+    sidebar.innerHTML = `
+    <div id="qa-sidebar-header">
+      <span>Answer History</span>
+    </div>
+    <div id="qa-history-list"><p style="color: #888; font-size: 13px;">No answers captured yet.</p></div>
+  `;
 
     toggleBtn.addEventListener("click", () => {
       captureCurrentAnswers();
