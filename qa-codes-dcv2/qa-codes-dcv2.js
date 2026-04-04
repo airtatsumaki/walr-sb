@@ -579,7 +579,7 @@ function answerForMe() {
     sidebar.id = "qa-sidebar";
     sidebar.innerHTML = `
     <div id="qa-sidebar-header">
-      <span>Answer History</span>
+      <span>Super Awesome Sidebar</span>
     </div>
     <div id="qa-history-list"><p style="color: #888; font-size: 13px;">No answers captured yet.</p></div>
   `;

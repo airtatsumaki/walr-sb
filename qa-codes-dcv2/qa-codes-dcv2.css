@@ -67,6 +67,7 @@
   flex-direction: column;
   transition: left 0.3s ease;
   font-family: monospace !important;
+  font-weight: 600;
 }
 
 #qa-sidebar.open {
@@ -116,7 +117,6 @@ body:has(#qa-sidebar.open) #qa-toggle-btn {
 
 .qa-history-qid {
   font-size: 13px;
-  font-width: 600;
   color: #7b8cde;
   margin-bottom: 4px;
 }
