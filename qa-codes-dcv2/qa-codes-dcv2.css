@@ -66,7 +66,7 @@
   display: flex;
   flex-direction: column;
   transition: left 0.3s ease;
-  font-family: monospace;
+  font-family: monospace !important;
 }
 
 #qa-sidebar.open {
@@ -115,13 +115,14 @@ body:has(#qa-sidebar.open) #qa-toggle-btn {
 }
 
 .qa-history-qid {
-  font-size: 18px;
+  font-size: 13px;
+  font-width: 600;
   color: #7b8cde;
   margin-bottom: 4px;
 }
 
 .qa-history-answer {
-  font-size: 16px;
+  font-size: 12px;
   padding-left: 6px;
   line-height: 1.6;
   color: #e0e0e0;
