@@ -164,9 +164,7 @@ function addAnswerForMeButton() {
 
       if (e.key === "ArrowLeft") {
         e.preventDefault();
-        const back =
-          document.querySelector(".buttonBack") ||
-          document.querySelector('[name="back"]');
+        const back = document.querySelector("#btnPrevious2");
         if (back) back.click();
       }
     });
