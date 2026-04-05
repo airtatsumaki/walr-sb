@@ -133,7 +133,7 @@ body:has(#qa-sidebar.open) #qa-toggle-btn {
   font-size: 13px;
   font-weight: 600;
   color: #7b8cde;
-  margin-bottom: 6px;
+  margin-bottom: 4px;
 }
 
 .qa-history-answer {

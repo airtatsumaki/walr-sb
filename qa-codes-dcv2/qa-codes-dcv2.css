@@ -138,7 +138,7 @@ body:has(#qa-sidebar.open) #qa-toggle-btn {
 
 .qa-history-answer {
   font-size: 12px;
-  padding-left: 6px;
+  padding-left: 8px;
   line-height: 1.6;
   color: #e0e0e0;
   border-left: 2px solid #2a2a4e;
