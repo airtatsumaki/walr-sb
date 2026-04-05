@@ -22,6 +22,18 @@
   );
 }
 
+/* Answer for me button */
+.answer-for-me {
+  padding: 6px 14px;
+  background: #98dacb;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 16px;
+  margin-top: 1px;
+  height: 42px;
+}
+
 /* Toggle button — fixed tab on left edge, always visible */
 #qa-toggle-btn {
   position: fixed;
