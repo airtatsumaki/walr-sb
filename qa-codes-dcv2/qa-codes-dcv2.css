@@ -66,7 +66,6 @@
   display: flex;
   flex-direction: column;
   transition: left 0.3s ease;
-  font-family: monospace !important;
   font-weight: 600;
 }
 
@@ -94,6 +93,7 @@ body:has(#qa-sidebar.open) #qa-toggle-btn {
   letter-spacing: 0.05em;
   color: #7b8cde;
   text-transform: uppercase;
+  font-family: monospace;
 }
 
 /* History list — flex: 1 means it fills remaining space and scrolls internally */
@@ -119,6 +119,7 @@ body:has(#qa-sidebar.open) #qa-toggle-btn {
   font-size: 13px;
   color: #7b8cde;
   margin-bottom: 4px;
+  font-family: monospace;
 }
 
 .qa-history-answer {
@@ -128,4 +129,5 @@ body:has(#qa-sidebar.open) #qa-toggle-btn {
   color: #e0e0e0;
   border-left: 2px solid #2a2a4e;
   margin-bottom: 4px;
+  font-family: monospace;
 }
