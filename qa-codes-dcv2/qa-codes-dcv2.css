@@ -29,9 +29,11 @@
   border: none;
   border-radius: 4px;
   cursor: pointer;
-  font-size: 16px;
   margin-top: 1px;
   height: 42px;
+  font-size: 0.875rem;
+  font-family: "Lato";
+  font-weight: 600;
 }
 
 /* Toggle button — fixed tab on left edge, always visible */
