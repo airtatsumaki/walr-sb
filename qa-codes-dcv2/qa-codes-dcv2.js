@@ -569,12 +569,12 @@ function answerForMe() {
     const toggleBtn = document.createElement("button");
     toggleBtn.id = "qa-toggle-btn";
     toggleBtn.innerHTML = `
-  <svg viewBox="0 0 24 24" width="24" height="24" aria-hidden="true">
-    <line x1="4" y1="6" x2="20" y2="6" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
-    <line x1="4" y1="12" x2="20" y2="12" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
-    <line x1="4" y1="18" x2="20" y2="18" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
-  </svg>
-`;
+    <svg viewBox="0 0 24 24" width="24" height="24" aria-hidden="true">
+      <line x1="4" y1="6" x2="20" y2="6" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+      <line x1="4" y1="12" x2="20" y2="12" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+      <line x1="4" y1="18" x2="20" y2="18" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+    </svg>
+    `;
     const sidebar = document.createElement("div");
     sidebar.id = "qa-sidebar";
     sidebar.innerHTML = `
@@ -582,7 +582,7 @@ function answerForMe() {
       <span>Super Awesome Sidebar</span>
     </div>
     <div id="qa-history-list"><p style="color: #888; font-size: 13px;">No answers captured yet.</p></div>
-  `;
+    `;
 
     toggleBtn.addEventListener("click", () => {
       captureCurrentAnswers();
@@ -607,10 +607,11 @@ function answerForMe() {
     helpIcon.setAttribute(
       "data-tooltip",
       `Features list:\n
-    - Answer history\n
-    - Answer for me button (answer question and auto next)\n
-    - CTRL/ COMMAND + right arrow (answer question and auto next)\n
-    - CTRL/ COMMAND + left arrow (go back to previuos question)`,
+      - Answer history\n
+      - Dummy backgrounds (prefix dummy QID's with 'HID_')\n
+      - Answer for me button (answer question and auto next)\n
+      - CTRL/ COMMAND + right arrow (answer question and auto next)\n
+      - CTRL/ COMMAND + left arrow (go back to previous question)`,
     );
     document.querySelector("#qa-sidebar-header").appendChild(helpIcon);
   }

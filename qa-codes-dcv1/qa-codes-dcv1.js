@@ -452,9 +452,10 @@ function buildHistorySidebar() {
     "data-tooltip",
     `Features list:\n
     - Answer history\n
+    - Dummy backgrounds (prefix dummy QID's with 'HID_')\n
     - Answer for me button (answer question and auto next)\n
     - CTRL/ COMMAND + right arrow (answer question and auto next)\n
-    - CTRL/ COMMAND + left arrow (go back to previuos question)`,
+    - CTRL/ COMMAND + left arrow (go back to previous question)`,
   );
   document.querySelector("#qa-sidebar-header").appendChild(helpIcon);
 
