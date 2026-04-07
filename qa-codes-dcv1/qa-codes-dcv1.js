@@ -450,7 +450,11 @@ function buildHistorySidebar() {
     </svg>`;
   helpIcon.setAttribute(
     "data-tooltip",
-    "QA Sidebar Help:\n- Use codes\n- Test flows",
+    `Features list:\n
+    - Answer for me button (answer question and auto next)\n
+    - Answer history\n
+    - CTRL/ COMMAND + right arrow (answer question and auto next)\n
+    - CTRL/ COMMAND + left arrow (go back to previuos question)`,
   );
   document.querySelector("#qa-sidebar-header").appendChild(helpIcon);
 
