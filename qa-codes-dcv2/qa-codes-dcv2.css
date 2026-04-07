@@ -56,7 +56,8 @@
 #qa-toggle-btn svg {
   width: 16px;
   height: 16px;
-  color: #7b8cde;
+  /*color: #7b8cde;*/
+  color: #98dacb;
 }
 
 /* Sidebar */
@@ -97,7 +98,8 @@ body:has(#qa-sidebar.open) #qa-toggle-btn {
   font-size: 13px;
   font-weight: 600;
   letter-spacing: 0.05em;
-  color: #7b8cde;
+  /* color: #7b8cde; */
+  color: #98dacb;
   text-transform: uppercase;
   font-family: monospace;
 }
@@ -123,7 +125,8 @@ body:has(#qa-sidebar.open) #qa-toggle-btn {
 
 .qa-history-qid {
   font-size: 13px;
-  color: #7b8cde;
+  /* color: #7b8cde; */
+  color: #98dacb;
   margin-bottom: 4px;
   font-family: monospace;
 }
@@ -141,8 +144,10 @@ body:has(#qa-sidebar.open) #qa-toggle-btn {
 #qa-help-icon svg {
   width: 20px;
   height: 20px;
-  stroke: #7b8cde;
-  fill: #7b8cde;
+  /* stroke: #7b8cde;
+  fill: #7b8cde; */
+  stroke: #98dacb;
+  fill: #98dacb;
 }
 
 #qa-help-icon {
