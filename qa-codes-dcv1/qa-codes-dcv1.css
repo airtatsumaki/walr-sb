@@ -56,7 +56,7 @@
 #qa-toggle-btn svg {
   width: 16px;
   height: 16px;
-  color: #98dacb;
+  color: #7b8cde;
 }
 
 /* Sidebar */
@@ -154,7 +154,7 @@ body:has(#qa-sidebar.open) #qa-toggle-btn {
   white-space: pre-line;
   position: absolute;
   bottom: -8px;
-  right: 0;
+  left: 0;
   transform: translateY(100%);
   background: #333;
   color: #fff;
@@ -164,7 +164,8 @@ body:has(#qa-sidebar.open) #qa-toggle-btn {
   opacity: 0;
   pointer-events: none;
   transition: opacity 0.2s ease;
-  width: 180px;
+  width: 485px;
+  text-transform: none;
 }
 
 #qa-help-icon:hover::after {

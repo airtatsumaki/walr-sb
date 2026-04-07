@@ -451,8 +451,8 @@ function buildHistorySidebar() {
   helpIcon.setAttribute(
     "data-tooltip",
     `Features list:\n
-    - Answer for me button (answer question and auto next)\n
     - Answer history\n
+    - Answer for me button (answer question and auto next)\n
     - CTRL/ COMMAND + right arrow (answer question and auto next)\n
     - CTRL/ COMMAND + left arrow (go back to previuos question)`,
   );
