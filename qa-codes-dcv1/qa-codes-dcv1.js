@@ -437,7 +437,7 @@ function buildHistorySidebar() {
   document.body.appendChild(sidebar);
 
   const helpIcon = document.createElement("span");
-  helpIcon.id = "qac-help-icon";
+  helpIcon.id = "qa-help-icon";
   helpIcon.innerHTML = `
     <svg viewBox="0 0 24 24">
       <g id="SVGRepo_bgCarrier" stroke-width="0"></g>
