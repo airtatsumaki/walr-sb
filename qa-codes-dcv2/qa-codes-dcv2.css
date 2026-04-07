@@ -155,7 +155,7 @@ body:has(#qa-sidebar.open) #qa-toggle-btn {
   white-space: pre-line;
   position: absolute;
   bottom: -8px;
-  left: 0;
+  left: -240px;
   transform: translateY(100%);
   background: #333;
   color: #fff;
