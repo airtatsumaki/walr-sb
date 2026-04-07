@@ -143,3 +143,30 @@ body:has(#qa-sidebar.open) #qa-toggle-btn {
   stroke: #7b8cde;
   fill: #7b8cde;
 }
+
+#qa-help-icon {
+  position: relative;
+  cursor: pointer;
+}
+
+#qa-help-icon::after {
+  content: attr(data-tooltip);
+  white-space: pre-line;
+  position: absolute;
+  bottom: -8px;
+  right: 0;
+  transform: translateY(100%);
+  background: #333;
+  color: #fff;
+  padding: 8px 10px;
+  border-radius: 6px;
+  font-size: 12px;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.2s ease;
+  width: 180px;
+}
+
+#qa-help-icon:hover::after {
+  opacity: 1;
+}
