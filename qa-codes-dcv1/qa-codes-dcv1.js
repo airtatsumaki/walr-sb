@@ -436,6 +436,20 @@ function buildHistorySidebar() {
   `;
   document.body.appendChild(sidebar);
 
+  const helpIcon = document.createElement("span");
+  helpIcon.id = "qac-help-icon";
+  helpIcon.innerHTML = `
+    <svg viewBox="0 0 24 24">
+      <path d="M23 12C23 18.0751 18.0751 23 12 23C5.92487 23 1 18.0751 1 12C1 5.92487 5.92487 1 12 1C18.0751 1 23 5.92487 23 12Z" />
+      <path d="M13.5 18C13.5 18.8284 12.8284 19.5 12 19.5C11.1716 19.5 10.5 18.8284 10.5 18C10.5 17.1716 11.1716 16.5 12 16.5C12.8284 16.5 13.5 17.1716 13.5 18Z" />
+      <path d="M11 12V14C11 14 11 15 12 15C13 15 13 14 13 14V12..." />
+    </svg>`;
+  helpIcon.setAttribute(
+    "data-tooltip",
+    "QA Sidebar Help:\n- Use codes\n- Test flows",
+  );
+  document.querySelector("#qa-sidebar-header").appendChild(helpIcon);
+
   // Toggle tab appended after sidebar
   const toggleBtn = document.createElement("button");
   toggleBtn.id = "qa-toggle-btn";

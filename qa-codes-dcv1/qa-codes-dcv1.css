@@ -136,3 +136,10 @@ body:has(#qa-sidebar.open) #qa-toggle-btn {
   border-left: 2px solid #2a2a4e;
   margin-bottom: 4px;
 }
+
+#qac-help-icon svg {
+  width: 20px;
+  height: 20px;
+  stroke: #7b8cde;
+  fill: #7b8cde;
+}
