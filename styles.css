@@ -21,6 +21,14 @@ ul.numeric-input-question-answers-container li.answer-container {
   visibility: hidden !important;
 }
 
+/* Multi OE's padding between text and OE box */
+/* DCV1 */
+.rs-ht.cReg.reg {
+  padding-right: 20px;
+}
+
+/* DCV2 */
+
 /*css hide N/A for a given slider (this example is 1st slider)*/
 #slider-holder0 #opt-out-container-0 {
   visibility: hidden;
