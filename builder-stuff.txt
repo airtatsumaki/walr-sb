@@ -12,3 +12,6 @@ dvc2 - untill fixed
 
 Masking and setting min/max (must mask from a QID, dummy. Cannot conditionally mask)
 (#1:3)&(\Q1.a)
+
+Using a 'script' function in question text for JS/ custom question piping
+{{\script:multiAnswerCount(\Q5)}}
