@@ -15,3 +15,9 @@ Masking and setting min/max (must mask from a QID, dummy. Cannot conditionally m
 
 Using a 'script' function in question text for JS/ custom question piping
 {{\script:multiAnswerCount(\Q5)}}
+
+Quota out text and redirect
+Thank you for your participation.
+<br />
+We're sorry, but we have already reached the required number of responses needed from this demographic group on this study.
+script:redirect('https://welcome.walr.com/surveyout','wid',\ALTID.a.1,'status','3')
