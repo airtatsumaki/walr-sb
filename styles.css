@@ -11,8 +11,7 @@ ul.numeric-input-question-answers-container li.answer-container {
 
 /*css to hide HID_JS_ dummy*/
 /*dcv1*/
-#QID,
-.buttonContainer {
+#QID {
   visibility: hidden !important;
 }
 

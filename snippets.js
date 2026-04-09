@@ -42,7 +42,7 @@ function pageReady() {
     input.checked = codes.includes(+input.value);
   });
 
-  setTimeout(() => $(".buttonNext").click(), 200);
+  setTimeout(() => $("#btnNext").click(), 200);
 }
 
 //dvc2
@@ -146,205 +146,21 @@ function validate() {
   }
 }
 
-//show radio button/ checkbox precodes. Place this in template advanced settings
-//will only work if &codes=1 is added to the test link
-//cannot work on carousels as the statements do not contain any precode values in their DOM elements
-//dvc1
-
-function applyQACodes() {
-  if (document.querySelector(".qa-code")) return;
-
-  // --- Question ID labels ---
-  document.querySelectorAll(".cTABLEContainQues[id]").forEach((table) => {
-    const value = table.getAttribute("id");
-    const questionText = table.querySelector(".cQuestionText");
-    if (questionText) {
-      const span = document.createElement("span");
-      span.className = "qa-code";
-      span.textContent = `[${value}]`;
-      questionText.prepend(span);
-    }
-  });
-
-  // --- Radio / Checkbox answer codes (exclude grid inputs) ---
-  document.querySelectorAll(".cRadio, .cCheck").forEach((input) => {
-    if (input.closest(".cCell.textcenter")) return; // skip grid inputs
-    const value = input.getAttribute("value");
-    const row = input.closest("tr");
-    if (row) {
-      const rowText = row.querySelector(".cRowText p");
-      if (rowText) {
-        const span = document.createElement("span");
-        span.className = "qa-code";
-        span.textContent = `[${value}]`;
-        rowText.prepend(span);
-      }
-    }
-  });
-
-  // --- Exclusive option labels (dcv1 MC questions) ---
-  document.querySelectorAll(".cTable").forEach((table) => {
-    const radios = table.querySelectorAll('input[type="radio"].cRadio');
-    const checkboxes = table.querySelectorAll('input[type="checkbox"].cCheck');
-    if (checkboxes.length > 0 && radios.length > 0) {
-      radios.forEach((radio) => {
-        if (radio.closest(".cCell.textcenter")) return; // skip grid inputs
-        const rowText = radio.closest("tr")?.querySelector(".cRowText p");
-        if (rowText) {
-          const span = document.createElement("span");
-          span.className = "qa-code";
-          span.textContent = "[EX]";
-          const existingCode = rowText.querySelector(".qa-code");
-          if (existingCode) {
-            existingCode.insertAdjacentElement("afterend", span);
-          } else {
-            rowText.prepend(span);
-          }
-        }
-      });
-    }
-  });
-
-  // --- Grid column headers ---
-  document.querySelectorAll(".cTable").forEach((table) => {
-    const headerCells = [...table.querySelectorAll('th.cCellHeader[id^="h_"]')];
-
-    headerCells.forEach((th, index) => {
-      const colValue = index + 1; // headers are 0-based, values are 1-based
-      const p = th.querySelector("p");
-      if (p) {
-        const span = document.createElement("span");
-        span.className = "qa-code";
-        span.textContent = `[${colValue}]`;
-        p.prepend(span);
-      }
-    });
-  });
-
-  // --- Grid row headers ---
-  document.querySelectorAll('th.cCellRowText[id^="r_"]').forEach((th) => {
-    const value = th.getAttribute("id").split("_").pop();
-    const p = th.querySelector(".cRowText p");
-    if (p) {
-      const span = document.createElement("span");
-      span.className = "qa-code";
-      span.textContent = `[${value}]`;
-      p.prepend(span);
-    }
-  });
-}
-
-function waitAndApply() {
-  if (!document.querySelector(".cTABLEContainQues")) {
-    setTimeout(waitAndApply, 100);
-    return;
-  }
-
-  applyQACodes();
-
-  const observer = new MutationObserver(() => {
-    observer.disconnect();
-    applyQACodes();
-    observer.observe(document.body, { childList: true, subtree: true });
-  });
-
-  observer.observe(document.body, { childList: true, subtree: true });
-}
-
-let params = new URLSearchParams(document.location.search);
-if (params.get("sms_qa") == 1) {
-  document.addEventListener("DOMContentLoaded", waitAndApply);
-}
-
-//dcv2
+// auto next if only code shows in a SC question. Never hide the next button as it can be hidden on the following question too
+// dcv1
 function pageReady() {
-  let params = new URLSearchParams(document.location.search);
-  if (params.get("qa") == 1) {
-    applyQACodes();
-
-    const observer = new MutationObserver(() => {
-      observer.disconnect();
-      applyQACodes();
-      observer.observe(document.body, { childList: true, subtree: true });
-    });
-
-    observer.observe(document.body, { childList: true, subtree: true });
+  if ($(".cRadio").length == 1) {
+    $("#QID").css("visibility", "hidden");
+    $(".cRadio").eq(0).prop("checked", true);
+    setTimeout(() => $("#btnNext").click(), 200);
   }
 }
 
-function applyQACodes() {
-  if (document.querySelector(".qa-code")) return;
-
-  var radios = [...document.querySelectorAll(".cRadio")];
-  var checkboxes = [...document.querySelectorAll(".cCheck")];
-  var gridColumnHeaders = [
-    ...document.querySelectorAll("th.answer-text-cell[id^='answerCol-']"),
-  ];
-  var gridRowHeaders = [
-    ...document.querySelectorAll("tr.answer-row[id^='answerRow-']"),
-  ];
-
-  // --- Question ID labels ---
-  var questionText = [...document.querySelectorAll(".question-container[id]")];
-  questionText.forEach((question) => {
-    const value = question.getAttribute("id");
-    const span = document.createElement("span");
-    span.className = "qa-code";
-    span.textContent = `[${value}]`;
-    question.prepend(span);
-  });
-
-  // --- Radio / Checkbox questions ---
-  var inputsToUse = [...checkboxes, ...radios];
-  inputsToUse.forEach((input) => {
-    const value = input.getAttribute("value");
-    const ansText = input
-      .closest(".answer-input-and-text-wrapper")
-      ?.querySelector(".ansText-Regular");
-    if (ansText) {
-      const p = ansText.querySelector("p");
-      const span = document.createElement("span");
-      span.className = "qa-code";
-      span.textContent = `[${value}]`;
-      if (p) {
-        p.prepend(span);
-      } else {
-        ansText.prepend(span);
-      }
-    }
-  });
-
-  // --- Grid column headers ---
-  gridColumnHeaders.forEach((th) => {
-    const value = th.id.split("-").pop();
-    const ansText = th.querySelector(".answerText-Regular");
-    if (ansText) {
-      const p = ansText.querySelector("p");
-      const span = document.createElement("span");
-      span.className = "qa-code";
-      span.textContent = `[${value}]`;
-      if (p) {
-        p.prepend(span);
-      } else {
-        ansText.prepend(span);
-      }
-    }
-  });
-
-  // --- Grid row headers ---
-  gridRowHeaders.forEach((tr) => {
-    const value = tr.id.split("-").pop();
-    const statText = tr.querySelector(".statementText-Regular");
-    if (statText) {
-      const p = statText.querySelector("p");
-      const span = document.createElement("span");
-      span.className = "qa-code";
-      span.textContent = `[${value}]`;
-      if (p) {
-        p.prepend(span);
-      } else {
-        statText.prepend(span);
-      }
-    }
-  });
+// dcv2
+function pageReady() {
+  if ($(".cRadio").length == 1) {
+    $("#QID").css("visibility", "hidden");
+    $(".cRadio").eq(0).prop("checked", true);
+    setTimeout(() => $(".main-next-button").click(), 200);
+  }
 }
