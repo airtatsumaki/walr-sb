@@ -34,7 +34,13 @@ ul.numeric-input-question-answers-container li.answer-container {
 }
 
 /* hide language selector */
+/* dcv1 */
 .langContainer {
+  display: none !important;
+}
+
+/* dcv2 */
+.languages-section {
   display: none !important;
 }
 
