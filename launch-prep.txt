@@ -6,7 +6,7 @@
 5) Publish survey, generate links as below
      - dcv1 survey live link (end):
      - <LINK>?P0=[%PlatformID%]&altid=[%RID%]
-     - 
+
      - dcv2 survey test link (end):
      - Test link - <LINK>?P0=[%PlatformID%]&altid=[%RID%]&t=1 
      - Live link - <LINK>?P0=[%PlatformID%]&altid=[%RID%]
