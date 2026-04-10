@@ -28,7 +28,10 @@ function applyQACodes() {
   });
 
   // Only apply to CURRENT question
-  if (currentQuestion.id && currentQuestion.id.startsWith("HID_")) {
+  if (
+    currentQuestion.id &&
+    currentQuestion.id.toLowerCase().startsWith("hid_")
+  ) {
     currentQuestion.parentElement?.classList.add("dummy-question");
   }
 
@@ -38,14 +41,16 @@ function applyQACodes() {
   if (currentId === lastQuestionId) return;
   lastQuestionId = currentId;
 
-  // --- साफ reset previous QA elements ---
+  // --- reset previous QA elements ---
   document.querySelectorAll(".qa-code").forEach((el) => el.remove());
   document.querySelectorAll(".answer-for-me").forEach((el) => el.remove());
 
   addAnswerForMeButton();
 
   // --- Flag hidden questions ---
-  var dummy = [...document.querySelectorAll('.question-container[id^="HID_"]')];
+  var dummy = [
+    ...document.querySelectorAll('.question-container[id^="HID_" i]'),
+  ];
   dummy.forEach((question) => {
     const parent = question.parentElement;
     if (parent) {
