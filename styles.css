@@ -33,12 +33,9 @@ ul.numeric-input-question-answers-container li.answer-container {
   visibility: hidden;
 }
 
-/* qa-codes styling*/
-.qa-code {
-  color: blue;
-  font-size: larger;
-  font-weight: bolder;
-  padding: 0px 5px 0px 0px;
+/* hide language selector */
+.langContainer {
+  display: none !important;
 }
 
 /* wistia audio player, change div height and hide seek bar*/
