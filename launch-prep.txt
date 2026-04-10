@@ -1,7 +1,8 @@
 1) set all dummies/ HID_ to sys_range c
 2) hide all HID_JS_ dummies with css and ensure $('next').click() is active
 3) double check quota counts and quota stops
-4) Hide back button (build > settings > hide back button)
+4a) Hide back button (build > settings > hide back button)
+4b) Hide language selector (build > settings > hide language selector)
 5) Publish survey, generate links as below
      - dcv1 survey live link (end):
      - <LINK>?P0=[%PlatformID%]&altid=[%RID%]
