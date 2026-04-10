@@ -64,8 +64,8 @@
 #qa-sidebar {
   position: fixed;
   top: 0;
-  left: -405px;
-  width: 405px;
+  left: -340px;
+  width: 320px;
   height: 100vh;
   z-index: 99998;
   background: #1a1a2e;
@@ -83,7 +83,7 @@
 /* Move toggle tab when sidebar is open */
 #qa-sidebar.open ~ #qa-toggle-btn,
 body:has(#qa-sidebar.open) #qa-toggle-btn {
-  left: 405px;
+  left: 320px;
 }
 
 #qa-sidebar-header {
@@ -111,6 +111,7 @@ body:has(#qa-sidebar.open) #qa-toggle-btn {
   padding: 16px;
   user-select: text;
   min-height: 0; /* critical — prevents flex child overflowing parent */
+  overflow-wrap: break-word;
 }
 
 .qa-history-entry {
