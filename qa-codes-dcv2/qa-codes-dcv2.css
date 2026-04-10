@@ -64,8 +64,8 @@
 #qa-sidebar {
   position: fixed;
   top: 0;
-  left: -340px;
-  width: 320px;
+  left: -405px;
+  width: 405px;
   height: 100vh;
   z-index: 99998;
   background: #1a1a2e;
@@ -82,7 +82,7 @@
 
 /* Move toggle tab when sidebar is open */
 body:has(#qa-sidebar.open) #qa-toggle-btn {
-  left: 320px;
+  left: 405px;
 }
 
 #qa-sidebar-header {
