@@ -1,4 +1,4 @@
-//served via https://raw.githack.com/
+//served via https://www.jsdelivr.com
 
 let lastQuestionId = null;
 
