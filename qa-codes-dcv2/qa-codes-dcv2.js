@@ -431,7 +431,7 @@ function answerForMe() {
       ];
 
       if (checked.length) {
-        const formatted = checked.map((input) => {
+        checked.forEach((input) => {
           const value = input.getAttribute("value");
 
           const label =
@@ -441,10 +441,8 @@ function answerForMe() {
               ?.innerText.replace(/^\[.*?\]/, "")
               .trim() || "";
 
-          return `[${value}] ${label}`;
+          entry.answers.push(`[${value}] ${label}`);
         });
-
-        entry.answers.push(formatted.join(", "));
       }
 
       // =========================
