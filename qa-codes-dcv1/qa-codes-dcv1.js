@@ -119,6 +119,50 @@ function applyQACodes() {
     }
   });
 
+  // --- Buttons question type (SC/MC with rendered button UI) ---
+  // .rsCQButton marks the underlying hidden table; .rsFlexBtnContainer[id] is the rendered UI
+  // alt on each rsBtn is 0-based and maps by position to the non-open rows in the hidden table
+  document.querySelectorAll(".cTABLEContainQues").forEach((questionContainer) => {
+    const btnContainer = questionContainer.querySelector(".rsFlexBtnContainer[id]");
+    if (!btnContainer) return;
+
+    const underlyingTable = questionContainer.querySelector(".cTable.rsCQButton");
+    if (!underlyingTable) return;
+
+    const regularRows = [
+      ...underlyingTable.querySelectorAll("tr.rsRow, tr.rsRowAlt"),
+    ].filter((row) => !row.classList.contains("rsRowOpen"));
+
+    [...btnContainer.querySelectorAll(".rsBtn")].forEach((btn) => {
+      const altIndex = parseInt(btn.getAttribute("alt"), 10);
+      const row = regularRows[altIndex];
+      if (!row) return;
+      const input = row.querySelector("input.cRadio, input.cCheck");
+      if (!input) return;
+      const value = input.getAttribute("value");
+      const p = btn.querySelector(".rs-ht p");
+      if (p && !p.querySelector(".qa-code")) {
+        const span = document.createElement("span");
+        span.className = "qa-code";
+        span.textContent = `[${value}]`;
+        p.prepend(span);
+      }
+    });
+
+    const openRow = underlyingTable.querySelector("tr.rsRowOpen");
+    if (!openRow) return;
+    const valueEl = openRow.querySelector("td.cCellRowText .cValue");
+    if (!valueEl) return;
+    const value = valueEl.innerText.trim();
+    const openPre = btnContainer.querySelector(".rsBtnOpenPre p");
+    if (openPre && !openPre.querySelector(".qa-code")) {
+      const span = document.createElement("span");
+      span.className = "qa-code";
+      span.textContent = `[${value}]`;
+      openPre.prepend(span);
+    }
+  });
+
   // --- Carousel scale buttons ---
   // .rsBtn elements are the clickable scale options, alt attr is 0-based index
   // these render dynamically so we watch for them with a MutationObserver
