@@ -308,6 +308,7 @@ function answerForMe() {
   // carousel re-renders from the hidden base grid, so answering the base
   // grid radios directly is the correct approach for both (same as dcv2)
   const isGrid = !!document.querySelector(".cCell.textcenter .cRadio");
+  const isMultiGrid = !!document.querySelector(".cCell.textcenter .cCheck");
   const isNumeric = !!document.querySelector(".rsNumeric");
 
   const isMC = [...document.querySelectorAll(".cTable")].some((table) => {
@@ -334,6 +335,35 @@ function answerForMe() {
         pick.checked = true;
         pick.dispatchEvent(new Event("input", { bubbles: true }));
         pick.dispatchEvent(new Event("change", { bubbles: true }));
+      }
+    });
+    return;
+  }
+
+  // --- Multi Grid (MC per row) ---
+  if (isMultiGrid) {
+    [...document.querySelectorAll("tr.rsRow, tr.rsRowAlt")].forEach((row) => {
+      if (row.classList.contains("rsNumRow")) return;
+      const checkboxes = [...row.querySelectorAll(".cCell.textcenter .cCheck")];
+      const exclusiveRadios = [
+        ...row.querySelectorAll(".cCell.textcenter .cRadio"),
+      ];
+      if (checkboxes.length === 0 && exclusiveRadios.length === 0) return;
+      const pickExclusive = exclusiveRadios.length > 0 && Math.random() < 0.2;
+      if (pickExclusive) {
+        const pick =
+          exclusiveRadios[Math.floor(Math.random() * exclusiveRadios.length)];
+        pick.checked = true;
+        pick.dispatchEvent(new Event("input", { bubbles: true }));
+        pick.dispatchEvent(new Event("change", { bubbles: true }));
+      } else {
+        const shuffled = checkboxes.sort(() => Math.random() - 0.5);
+        const count = Math.floor(Math.random() * shuffled.length) + 1;
+        shuffled.slice(0, count).forEach((cb) => {
+          cb.checked = true;
+          cb.dispatchEvent(new Event("input", { bubbles: true }));
+          cb.dispatchEvent(new Event("change", { bubbles: true }));
+        });
       }
     });
     return;

@@ -3,7 +3,8 @@
 3) double check quota counts and quota stops
 4a) Hide back button (build > settings > hide back button)
 4b) Hide language selector (build > settings > hide language selector)
-5) Publish survey, generate links as below
+5a) Publish survey, generate links as below
+5b) Launch > new audience > Live link > enter a name
      - dcv1 survey live link (end):
      - <LINK>?P0=[%PlatformID%]&altid=[%RID%]
 
