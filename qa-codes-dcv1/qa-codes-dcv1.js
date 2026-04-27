@@ -545,6 +545,33 @@ function captureCurrentAnswers() {
       entry.answers.push(`[${rowLabel}] = ${colHeader} [${checked.value}]`);
     });
 
+    // --- Multi Grid ---
+    [...table.querySelectorAll("tr.rsRow, tr.rsRowAlt")].forEach((row) => {
+      if (row.classList.contains("rsNumRow")) return;
+      const allCheckboxesInRow = [
+        ...row.querySelectorAll(".cCell.textcenter .cCheck"),
+      ];
+      const checkedInRow = allCheckboxesInRow.filter((cb) => cb.checked);
+      if (checkedInRow.length === 0) return;
+
+      const rowLabel = row
+        .querySelector(".cCellRowText .cRowText p")
+        ?.innerText.replace(/^\[.*?\]/, "")
+        .trim();
+
+      const colHeaders = [...table.querySelectorAll('th.cCellHeader[id^="h_"]')];
+      const selections = checkedInRow.map((cb) => {
+        const colIndex = allCheckboxesInRow.indexOf(cb);
+        const colHeader = colHeaders[colIndex]
+          ?.querySelector("p")
+          ?.innerText.replace(/^\[.*?\]/, "")
+          .trim();
+        return `${colHeader} [${cb.value}]`;
+      });
+
+      entry.answers.push(`[${rowLabel}] = ${selections.join(", ")}`);
+    });
+
     // --- Numeric (.cFInput is the dcv1 numeric input class) ---
     [...table.querySelectorAll(".cFInput")].forEach((input, index) => {
       if (input.value === "") return;
