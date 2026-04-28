@@ -237,8 +237,22 @@ function waitAndApply() {
 
   applyQACodes();
 
-  const observer = new MutationObserver(() => {
+  const observer = new MutationObserver((mutations) => {
     observer.disconnect();
+
+    // Capture answers from any question tables that are being removed from the DOM.
+    // Detached nodes retain their form state, so this works for programmatic
+    // advances where no click event is dispatched (e.g. survey pageReady hooks).
+    for (const mutation of mutations) {
+      for (const node of mutation.removedNodes) {
+        if (node.nodeType !== 1) continue;
+        const tables = node.matches(".cTABLEContainQues[id]")
+          ? [node]
+          : [...node.querySelectorAll(".cTABLEContainQues[id]")];
+        if (tables.length > 0) captureCurrentAnswers(tables);
+      }
+    }
+
     applyQACodes();
     observer.observe(document.body, { childList: true, subtree: true });
   });
@@ -496,8 +510,10 @@ function captureCarouselAnswer(clickedBtn) {
 // ===============================
 // CAPTURE ANSWERS
 // ===============================
-function captureCurrentAnswers() {
-  [...document.querySelectorAll(".cTABLEContainQues[id]")].forEach((table) => {
+function captureCurrentAnswers(tables) {
+  const toProcess =
+    tables || [...document.querySelectorAll(".cTABLEContainQues[id]")];
+  toProcess.forEach((table) => {
     const qid = table.getAttribute("id");
     const entry = { qid, answers: [] };
 
@@ -738,6 +754,8 @@ function initClickWatcher() {
       if (carouselBtn) {
         captureCarouselAnswer(carouselBtn);
       }
+
+
     },
     true,
   );
