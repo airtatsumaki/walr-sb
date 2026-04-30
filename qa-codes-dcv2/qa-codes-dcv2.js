@@ -428,7 +428,7 @@ function answerForMe() {
       // =========================
       const checked = [
         ...question.querySelectorAll(".cRadio:checked, .cCheck:checked"),
-      ];
+      ].filter((input) => !input.closest(".answer-row"));
 
       if (checked.length) {
         checked.forEach((input) => {
@@ -470,6 +470,38 @@ function answerForMe() {
 
         entry.answers.push(
           `[${statementValue}] ${rowLabel} = ${colHeader} [${checked.value}]`,
+        );
+      });
+
+      // =========================
+      // MULTI GRID
+      // =========================
+      [...question.querySelectorAll(".answer-row")].forEach((row) => {
+        const allCheckboxesInRow = [...row.querySelectorAll(".cCheck")];
+        const checkedInRow = allCheckboxesInRow.filter((cb) => cb.checked);
+        if (checkedInRow.length === 0) return;
+
+        const statementValue = row
+          .querySelector(".qa-code")
+          ?.innerText.replace(/\[|\]/g, "");
+
+        const rowLabel = row
+          .querySelector(".statementText-Regular p")
+          ?.innerText.replace(/^\[.*?\]/, "")
+          .trim();
+
+        const selections = checkedInRow.map((cb) => {
+          const colHeader = question
+            .querySelector(
+              `th.answer-text-cell[id$="-${cb.value}"] .answerText-Regular p`,
+            )
+            ?.innerText.replace(/^\[.*?\]/, "")
+            .trim();
+          return `${colHeader} [${cb.value}]`;
+        });
+
+        entry.answers.push(
+          `[${statementValue}] ${rowLabel} = ${selections.join(", ")}`,
         );
       });
 
