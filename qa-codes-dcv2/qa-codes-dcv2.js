@@ -252,6 +252,7 @@ function answerForMe() {
   const isMulti = document.querySelector(".multi-question");
   const isSingle = document.querySelector(".single-question");
   const isSingleGrid = document.querySelector(".single-grid-question");
+  const isMultiGrid = !!document.querySelector(".answer-row .cCheck");
   const isNumeric = document.querySelector(".numeric-input-question");
 
   // --- Grid (single per row) ---
@@ -264,6 +265,30 @@ function answerForMe() {
         pick.checked = true;
         pick.dispatchEvent(new Event("input", { bubbles: true }));
         pick.dispatchEvent(new Event("change", { bubbles: true }));
+      }
+    });
+
+    // --- Multi Grid (MC per row) ---
+  } else if (isMultiGrid) {
+    [...document.querySelectorAll(".answer-row")].forEach((row) => {
+      const checkboxes = [...row.querySelectorAll(".cCheck")];
+      const exclusiveRadios = [...row.querySelectorAll(".cRadio")];
+      if (checkboxes.length === 0 && exclusiveRadios.length === 0) return;
+      const pickExclusive = exclusiveRadios.length > 0 && Math.random() < 0.2;
+      if (pickExclusive) {
+        const pick =
+          exclusiveRadios[Math.floor(Math.random() * exclusiveRadios.length)];
+        pick.checked = true;
+        pick.dispatchEvent(new Event("input", { bubbles: true }));
+        pick.dispatchEvent(new Event("change", { bubbles: true }));
+      } else {
+        const shuffled = checkboxes.sort(() => Math.random() - 0.5);
+        const count = Math.floor(Math.random() * shuffled.length) + 1;
+        shuffled.slice(0, count).forEach((cb) => {
+          cb.checked = true;
+          cb.dispatchEvent(new Event("input", { bubbles: true }));
+          cb.dispatchEvent(new Event("change", { bubbles: true }));
+        });
       }
     });
 
