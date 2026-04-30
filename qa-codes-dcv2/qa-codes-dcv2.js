@@ -613,7 +613,7 @@ function answerForMe() {
       .map(
         (entry) => `
       <div class="qa-history-entry">
-        <div class="qa-history-qid">${entry.qid}</div>
+        <div class="qa-history-qid" title="Click to navigate back to this question">${entry.qid}</div>
         ${entry.answers
           .map((a) => `<div class="qa-history-answer">${a}</div>`)
           .join("")}
@@ -621,6 +621,58 @@ function answerForMe() {
     `,
       )
       .join("");
+  }
+
+  function showNavToast(targetQid, onStop) {
+    const existing = document.getElementById("qa-nav-toast");
+    if (existing) existing.remove();
+
+    const toast = document.createElement("div");
+    toast.id = "qa-nav-toast";
+    toast.innerHTML = `
+      <div id="qa-nav-toast-msg">Navigating to <strong>${targetQid}</strong>&hellip; please stand by</div>
+      <button id="qa-nav-toast-stop">Stop</button>
+    `;
+    document.body.appendChild(toast);
+
+    document.getElementById("qa-nav-toast-stop").addEventListener("click", () => {
+      toast.remove();
+      onStop();
+    });
+
+    return toast;
+  }
+
+  function navigateBackToQuestion(targetQid) {
+    if (lastQuestionId === targetQid) return;
+
+    let cancelled = false;
+    const toast = showNavToast(targetQid, () => {
+      cancelled = true;
+    });
+
+    const interval = setInterval(() => {
+      if (cancelled) {
+        clearInterval(interval);
+        toast.remove();
+        return;
+      }
+
+      if (lastQuestionId === targetQid) {
+        clearInterval(interval);
+        toast.remove();
+        return;
+      }
+
+      const backBtn = document.querySelector(".main-back-button");
+      if (!backBtn || backBtn.disabled) {
+        clearInterval(interval);
+        toast.remove();
+        return;
+      }
+
+      backBtn.click();
+    }, 400);
   }
 
   function buildHistorySidebar() {
@@ -652,6 +704,52 @@ function answerForMe() {
     document.body.appendChild(toggleBtn);
     document.body.appendChild(sidebar);
 
+    if (!document.getElementById("qa-nav-styles")) {
+      const style = document.createElement("style");
+      style.id = "qa-nav-styles";
+      style.textContent = `
+        #qa-nav-toast {
+          position: fixed;
+          bottom: 28px;
+          left: 50%;
+          transform: translateX(-50%);
+          background: #1a1a2e;
+          color: #fff;
+          border-radius: 10px;
+          padding: 14px 20px;
+          display: flex;
+          align-items: center;
+          gap: 16px;
+          font-family: sans-serif;
+          font-size: 14px;
+          z-index: 99999;
+          box-shadow: 0 4px 20px rgba(0,0,0,0.45);
+          min-width: 320px;
+        }
+        #qa-nav-toast-msg { flex: 1; }
+        #qa-nav-toast-stop {
+          background: #e74c3c;
+          color: #fff;
+          border: none;
+          border-radius: 6px;
+          padding: 6px 14px;
+          cursor: pointer;
+          font-size: 13px;
+          white-space: nowrap;
+        }
+        #qa-nav-toast-stop:hover { background: #c0392b; }
+        .qa-history-qid { cursor: pointer; }
+        .qa-history-qid:hover { opacity: 0.7; text-decoration: underline; }
+      `;
+      document.head.appendChild(style);
+    }
+
+    document.getElementById("qa-history-list").addEventListener("click", (e) => {
+      const qidEl = e.target.closest(".qa-history-qid");
+      if (!qidEl) return;
+      navigateBackToQuestion(qidEl.textContent.trim());
+    });
+
     const helpIcon = document.createElement("span");
     helpIcon.id = "qa-help-icon";
     helpIcon.innerHTML = `
@@ -668,6 +766,7 @@ function answerForMe() {
       "data-tooltip",
       `Features list:\n
       - Answer history\n
+      - Click any QID in history to navigate back to that question\n
       - Dummy backgrounds (prefix dummy QID's with 'HID_')\n
       - Answer for me button (answer question and auto next)\n
       - CTRL/ COMMAND + right arrow (answer question and auto next)\n
