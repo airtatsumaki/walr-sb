@@ -609,17 +609,21 @@ function answerForMe() {
       return;
     }
 
+    const activeQid =
+      document.querySelector(".question-container")?.id ?? null;
+
     list.innerHTML = window.qaAnswerHistory
-      .map(
-        (entry) => `
+      .map((entry) => {
+        const isCurrent = entry.qid === activeQid;
+        return `
       <div class="qa-history-entry">
-        <div class="qa-history-qid" title="Click to navigate back to this question (clears forward history)">${entry.qid}</div>
+        <div class="qa-history-qid${isCurrent ? " qa-history-qid--current" : ""}"${isCurrent ? "" : ` title="Click to navigate back to this question (clears forward history)"`}>${entry.qid}</div>
         ${entry.answers
           .map((a) => `<div class="qa-history-answer">${a}</div>`)
           .join("")}
       </div>
-    `,
-      )
+    `;
+      })
       .join("");
   }
 
@@ -739,7 +743,7 @@ function answerForMe() {
 
     document.getElementById("qa-history-list").addEventListener("click", (e) => {
       const qidEl = e.target.closest(".qa-history-qid");
-      if (!qidEl) return;
+      if (!qidEl || qidEl.classList.contains("qa-history-qid--current")) return;
       navigateBackToQuestion(qidEl.textContent.trim());
     });
 
