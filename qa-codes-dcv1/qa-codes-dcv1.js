@@ -120,23 +120,32 @@ function applyQACodes() {
   });
 
   // --- Buttons question type (SC/MC with rendered button UI) ---
-  // .rsCQButton marks the underlying hidden table; .rsFlexBtnContainer[id] is the rendered UI
-  // alt on each rsBtn is 0-based and maps by position to the non-open rows in the hidden table
+  // The rendered container lives outside .cTABLEContainQues — its id is always {qid}_btn
+  // alt on each .rsBtn is 0-based and maps to non-open rows in the underlying hidden table
   document
-    .querySelectorAll(".cTABLEContainQues")
+    .querySelectorAll(".cTABLEContainQues[id]")
     .forEach((questionContainer) => {
-      const btnContainer = questionContainer.querySelector(
-        ".rsFlexBtnContainer[id]",
-      );
-      if (!btnContainer) return;
+      const qid = questionContainer.getAttribute("id");
+      const btnContainer = document.getElementById(`${qid}_btn`);
+      if (
+        !btnContainer ||
+        !btnContainer.classList.contains("rsFlexBtnContainer")
+      )
+        return;
 
-      const underlyingTable =
-        questionContainer.querySelector(".cTable.rsCQButton");
-      if (!underlyingTable) return;
+      // True MC: has both cCheck (regular) and cRadio (exclusive) inputs
+      const isMC =
+        !!questionContainer.querySelector("input.cCheck") &&
+        !!questionContainer.querySelector("input.cRadio");
 
+      // Non-open rows with inputs, in DOM order → matches alt index on .rsBtn
       const regularRows = [
-        ...underlyingTable.querySelectorAll("tr.rsRow, tr.rsRowAlt"),
-      ].filter((row) => !row.classList.contains("rsRowOpen"));
+        ...questionContainer.querySelectorAll("tr.rsRow, tr.rsRowAlt"),
+      ].filter(
+        (row) =>
+          !row.classList.contains("rsRowOpen") &&
+          row.querySelector("input.cRadio, input.cCheck"),
+      );
 
       [...btnContainer.querySelectorAll(".rsBtn")].forEach((btn) => {
         const altIndex = parseInt(btn.getAttribute("alt"), 10);
@@ -146,24 +155,31 @@ function applyQACodes() {
         if (!input) return;
         const value = input.getAttribute("value");
         const p = btn.querySelector(".rs-ht p");
-        if (p && !p.querySelector(".qa-code")) {
-          const span = document.createElement("span");
-          span.className = "qa-code";
-          span.textContent = `[${value}]`;
-          p.prepend(span);
+        if (!p || p.querySelector(".qa-code")) return;
+        const valueSpan = document.createElement("span");
+        valueSpan.className = "qa-code";
+        valueSpan.textContent = `[${value}]`;
+        p.prepend(valueSpan);
+        // [EX] only for MC questions where this specific option is an exclusive radio
+        if (isMC && input.classList.contains("cRadio")) {
+          const exSpan = document.createElement("span");
+          exSpan.className = "qa-code";
+          exSpan.textContent = "[EX]";
+          valueSpan.insertAdjacentElement("afterend", exSpan);
         }
       });
 
-      const openRow = underlyingTable.querySelector("tr.rsRowOpen");
+      // Apply value code to the "other specify" rendered text
+      const openRow = questionContainer.querySelector("tr.rsRowOpen");
       if (!openRow) return;
       const valueEl = openRow.querySelector("td.cCellRowText .cValue");
       if (!valueEl) return;
-      const value = valueEl.innerText.trim();
+      const openValue = valueEl.innerText.trim();
       const openPre = btnContainer.querySelector(".rsBtnOpenPre p");
       if (openPre && !openPre.querySelector(".qa-code")) {
         const span = document.createElement("span");
         span.className = "qa-code";
-        span.textContent = `[${value}]`;
+        span.textContent = `[${openValue}]`;
         openPre.prepend(span);
       }
     });
@@ -171,7 +187,10 @@ function applyQACodes() {
   // --- Carousel scale buttons ---
   // .rsBtn elements are the clickable scale options, alt attr is 0-based index
   // these render dynamically so we watch for them with a MutationObserver
-  const carouselBtnContainer = document.querySelector(".rsFlexBtnContainer");
+  // Guard: only run for genuine carousel questions (those with .rsScrollGridContent)
+  const carouselBtnContainer =
+    document.querySelector(".rsScrollGridContent") &&
+    document.querySelector(".rsFlexBtnContainer");
   if (carouselBtnContainer) {
     const applyCarouselCodes = () => {
       [...carouselBtnContainer.querySelectorAll(".rsBtn")].forEach((btn) => {
@@ -440,8 +459,10 @@ function answerForMe() {
     return;
   }
 
-  // --- Open ended ---
-  const openEnds = [...document.querySelectorAll(".cTextInput")];
+  // --- Open ended / Essay / Other specify ---
+  const openEnds = [
+    ...document.querySelectorAll("textarea.cTextArea, input.cTextInput"),
+  ];
   if (openEnds.length > 0) {
     openEnds.forEach((oe, index) => {
       oe.value = `This is random data ${index + 1}`;
@@ -608,15 +629,31 @@ function captureCurrentAnswers(tables) {
       entry.answers.push(`[${index + 1}] ${label} = ${input.value}`);
     });
 
-    // --- Open ended ---
-    [...table.querySelectorAll(".cTextInput")].forEach((oe, index) => {
+    // --- Open ended / Essay (textarea) ---
+    [...table.querySelectorAll("textarea.cTextArea")].forEach((oe, index) => {
+      if (oe.value.trim() === "") return;
+      const rowLabel = oe
+        .closest("tr")
+        ?.querySelector(".cCellRowText .cReg p")
+        ?.innerText.replace(/^\[.*?\]/, "")
+        .trim();
+      const questionLabel = table
+        .querySelector(".cQuestionText .cReg p")
+        ?.innerText.replace(/^\[.*?\]/, "")
+        .trim();
+      const label = rowLabel || questionLabel || `Response ${index + 1}`;
+      entry.answers.push(`${label}: "${oe.value.trim()}"`);
+    });
+
+    // --- Other specify inline text inputs (button questions) ---
+    [...table.querySelectorAll("input.cTextInput")].forEach((oe, index) => {
       if (oe.value.trim() === "") return;
       const label =
         oe
           .closest("tr")
-          ?.querySelector(".cRowText p")
+          ?.querySelector(".cCellRowText .cReg p")
           ?.innerText.replace(/^\[.*?\]/, "")
-          .trim() || `Response ${index + 1}`;
+          .trim() || `Other ${index + 1}`;
       entry.answers.push(`${label}: "${oe.value.trim()}"`);
     });
 
@@ -669,7 +706,7 @@ function renderSidebar() {
       const isCurrent = entry.qid === activeQid;
       return `
     <div class="qa-history-entry">
-      <div class="qa-history-qid${isCurrent ? " qa-history-qid--current" : ""}"${isCurrent ? "" : ` title="Click to navigate back to this question (clears forward history)"`}>${entry.qid}</div>
+      <div class="qa-history-qid${isCurrent ? " qa-history-qid--current" : ""}"${isCurrent ? "" : ` title="Click to navigate back to this question"`}>${entry.qid}</div>
       ${entry.answers
         .map((a) => `<div class="qa-history-answer">${a}</div>`)
         .join("")}
@@ -859,17 +896,18 @@ function initBackButtonWatcher() {
 // NEXT BUTTON WATCHER
 // ===============================
 function initNextButtonWatcher() {
-  const observer = new MutationObserver(() => {
+  function hookNextBtn() {
     const nextBtn =
       document.querySelector(".buttonNext") ||
       document.querySelector('[name="next"]');
-
     if (!nextBtn || nextBtn.dataset.qaHooked) return;
     nextBtn.dataset.qaHooked = "true";
-
     nextBtn.addEventListener("click", () => captureCurrentAnswers(), true);
-  });
+  }
 
+  hookNextBtn(); // hook immediately if button is already in DOM
+
+  const observer = new MutationObserver(hookNextBtn);
   observer.observe(document.body, { childList: true, subtree: true });
 }
 
@@ -897,7 +935,7 @@ function initClickWatcher() {
   document.addEventListener(
     "input",
     (e) => {
-      if (e.target.matches(".cTextInput, .cFInput")) {
+      if (e.target.matches(".cTextArea, .cFInput, .cTextInput")) {
         setTimeout(() => captureCurrentAnswers(), 0);
       }
     },
