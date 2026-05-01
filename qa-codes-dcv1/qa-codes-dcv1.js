@@ -837,7 +837,7 @@ function buildHistorySidebar() {
     - Answer for me button (answer question and auto next)\n
     - CTRL/ COMMAND + right arrow (answer question and auto next)\n
     - CTRL/ COMMAND + left arrow (go back to previous question)\n
-    - Click a QID in history to navigate back (clears forward history)`,
+    - Click a QID in history to navigate back`,
   );
   document.querySelector("#qa-sidebar-header").appendChild(helpIcon);
 

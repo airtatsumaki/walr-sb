@@ -609,8 +609,7 @@ function answerForMe() {
       return;
     }
 
-    const activeQid =
-      document.querySelector(".question-container")?.id ?? null;
+    const activeQid = document.querySelector(".question-container")?.id ?? null;
 
     list.innerHTML = window.qaAnswerHistory
       .map((entry) => {
@@ -639,10 +638,12 @@ function answerForMe() {
     `;
     document.body.appendChild(toast);
 
-    document.getElementById("qa-nav-toast-stop").addEventListener("click", () => {
-      toast.remove();
-      onStop();
-    });
+    document
+      .getElementById("qa-nav-toast-stop")
+      .addEventListener("click", () => {
+        toast.remove();
+        onStop();
+      });
 
     return toast;
   }
@@ -741,11 +742,14 @@ function answerForMe() {
     document.body.appendChild(toggleBtn);
     document.body.appendChild(sidebar);
 
-    document.getElementById("qa-history-list").addEventListener("click", (e) => {
-      const qidEl = e.target.closest(".qa-history-qid");
-      if (!qidEl || qidEl.classList.contains("qa-history-qid--current")) return;
-      navigateBackToQuestion(qidEl.textContent.trim());
-    });
+    document
+      .getElementById("qa-history-list")
+      .addEventListener("click", (e) => {
+        const qidEl = e.target.closest(".qa-history-qid");
+        if (!qidEl || qidEl.classList.contains("qa-history-qid--current"))
+          return;
+        navigateBackToQuestion(qidEl.textContent.trim());
+      });
 
     const helpIcon = document.createElement("span");
     helpIcon.id = "qa-help-icon";
@@ -763,11 +767,11 @@ function answerForMe() {
       "data-tooltip",
       `Features list:\n
       - Answer history\n
-      - Click any QID in history to navigate back to that question (clears forward history)\n
       - Dummy backgrounds (prefix dummy QID's with 'HID_')\n
       - Answer for me button (answer question and auto next)\n
       - CTRL/ COMMAND + right arrow (answer question and auto next)\n
-      - CTRL/ COMMAND + left arrow (go back to previous question)`,
+      - CTRL/ COMMAND + left arrow (go back to previous question)\n
+      - Click any QID in history to navigate back to that question`,
     );
     document.querySelector("#qa-sidebar-header").appendChild(helpIcon);
   }
