@@ -613,7 +613,7 @@ function answerForMe() {
       .map(
         (entry) => `
       <div class="qa-history-entry">
-        <div class="qa-history-qid" title="Click to navigate back to this question">${entry.qid}</div>
+        <div class="qa-history-qid" title="Click to navigate back to this question (clears forward history)">${entry.qid}</div>
         ${entry.answers
           .map((a) => `<div class="qa-history-answer">${a}</div>`)
           .join("")}
@@ -644,12 +644,19 @@ function answerForMe() {
   }
 
   function navigateBackToQuestion(targetQid) {
-    if (lastQuestionId === targetQid) return;
+    const currentQid = () =>
+      document.querySelector(".question-container")?.id ?? null;
+
+    if (currentQid() === targetQid) return;
 
     let cancelled = false;
     const toast = showNavToast(targetQid, () => {
       cancelled = true;
     });
+
+    let lastSeenQid = currentQid();
+    let lastClickTime = 0;
+    let stuckSince = null;
 
     const interval = setInterval(() => {
       if (cancelled) {
@@ -658,21 +665,47 @@ function answerForMe() {
         return;
       }
 
-      if (lastQuestionId === targetQid) {
+      const current = currentQid();
+
+      if (current === targetQid) {
         clearInterval(interval);
         toast.remove();
+        const targetIndex = window.qaAnswerHistory.findIndex(
+          (e) => e.qid === targetQid,
+        );
+        if (targetIndex !== -1) {
+          window.qaAnswerHistory = window.qaAnswerHistory.slice(
+            0,
+            targetIndex + 1,
+          );
+          renderSidebar();
+        }
         return;
       }
 
       const backBtn = document.querySelector(".main-back-button");
       if (!backBtn || backBtn.disabled) {
-        clearInterval(interval);
-        toast.remove();
+        // Button may be temporarily disabled during Vue's transition — wait, don't stop
+        if (!stuckSince) stuckSince = Date.now();
+        if (Date.now() - stuckSince > 4000) {
+          // Genuinely stuck for 4s (e.g. reached the survey start)
+          clearInterval(interval);
+          toast.remove();
+        }
         return;
       }
+      stuckSince = null;
 
-      backBtn.click();
-    }, 400);
+      const now = Date.now();
+      const qidChanged = current !== lastSeenQid;
+      const timeoutElapsed = now - lastClickTime > 500;
+
+      if (qidChanged || timeoutElapsed) {
+        lastSeenQid = current;
+        lastClickTime = now;
+        backBtn.click();
+      }
+    }, 100);
   }
 
   function buildHistorySidebar() {
@@ -704,46 +737,6 @@ function answerForMe() {
     document.body.appendChild(toggleBtn);
     document.body.appendChild(sidebar);
 
-    if (!document.getElementById("qa-nav-styles")) {
-      const style = document.createElement("style");
-      style.id = "qa-nav-styles";
-      style.textContent = `
-        #qa-nav-toast {
-          position: fixed;
-          bottom: 28px;
-          left: 50%;
-          transform: translateX(-50%);
-          background: #1a1a2e;
-          color: #fff;
-          border-radius: 10px;
-          padding: 14px 20px;
-          display: flex;
-          align-items: center;
-          gap: 16px;
-          font-family: sans-serif;
-          font-size: 14px;
-          z-index: 99999;
-          box-shadow: 0 4px 20px rgba(0,0,0,0.45);
-          min-width: 320px;
-        }
-        #qa-nav-toast-msg { flex: 1; }
-        #qa-nav-toast-stop {
-          background: #e74c3c;
-          color: #fff;
-          border: none;
-          border-radius: 6px;
-          padding: 6px 14px;
-          cursor: pointer;
-          font-size: 13px;
-          white-space: nowrap;
-        }
-        #qa-nav-toast-stop:hover { background: #c0392b; }
-        .qa-history-qid { cursor: pointer; }
-        .qa-history-qid:hover { opacity: 0.7; text-decoration: underline; }
-      `;
-      document.head.appendChild(style);
-    }
-
     document.getElementById("qa-history-list").addEventListener("click", (e) => {
       const qidEl = e.target.closest(".qa-history-qid");
       if (!qidEl) return;
@@ -766,13 +759,35 @@ function answerForMe() {
       "data-tooltip",
       `Features list:\n
       - Answer history\n
-      - Click any QID in history to navigate back to that question\n
+      - Click any QID in history to navigate back to that question (clears forward history)\n
       - Dummy backgrounds (prefix dummy QID's with 'HID_')\n
       - Answer for me button (answer question and auto next)\n
       - CTRL/ COMMAND + right arrow (answer question and auto next)\n
       - CTRL/ COMMAND + left arrow (go back to previous question)`,
     );
     document.querySelector("#qa-sidebar-header").appendChild(helpIcon);
+  }
+
+  // ===============================
+  // BACK BUTTON HOOK — trim history on any back navigation
+  // ===============================
+  function initBackButtonWatcher() {
+    document.addEventListener(
+      "click",
+      (e) => {
+        if (!e.target.closest(".main-back-button")) return;
+        const current = document.querySelector(".question-container")?.id;
+        if (!current) return;
+        const idx = window.qaAnswerHistory.findIndex(
+          (entry) => entry.qid === current,
+        );
+        if (idx !== -1) {
+          window.qaAnswerHistory = window.qaAnswerHistory.slice(0, idx);
+          renderSidebar();
+        }
+      },
+      true,
+    );
   }
 
   // ===============================
@@ -827,7 +842,8 @@ function answerForMe() {
   function init() {
     buildHistorySidebar();
     initNextButtonWatcher();
-    initClickWatcher(); // <-- THIS is the missing piece
+    initBackButtonWatcher();
+    initClickWatcher();
     console.log("QA History Enabled");
   }
 
