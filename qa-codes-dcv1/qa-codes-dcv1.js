@@ -122,46 +122,51 @@ function applyQACodes() {
   // --- Buttons question type (SC/MC with rendered button UI) ---
   // .rsCQButton marks the underlying hidden table; .rsFlexBtnContainer[id] is the rendered UI
   // alt on each rsBtn is 0-based and maps by position to the non-open rows in the hidden table
-  document.querySelectorAll(".cTABLEContainQues").forEach((questionContainer) => {
-    const btnContainer = questionContainer.querySelector(".rsFlexBtnContainer[id]");
-    if (!btnContainer) return;
+  document
+    .querySelectorAll(".cTABLEContainQues")
+    .forEach((questionContainer) => {
+      const btnContainer = questionContainer.querySelector(
+        ".rsFlexBtnContainer[id]",
+      );
+      if (!btnContainer) return;
 
-    const underlyingTable = questionContainer.querySelector(".cTable.rsCQButton");
-    if (!underlyingTable) return;
+      const underlyingTable =
+        questionContainer.querySelector(".cTable.rsCQButton");
+      if (!underlyingTable) return;
 
-    const regularRows = [
-      ...underlyingTable.querySelectorAll("tr.rsRow, tr.rsRowAlt"),
-    ].filter((row) => !row.classList.contains("rsRowOpen"));
+      const regularRows = [
+        ...underlyingTable.querySelectorAll("tr.rsRow, tr.rsRowAlt"),
+      ].filter((row) => !row.classList.contains("rsRowOpen"));
 
-    [...btnContainer.querySelectorAll(".rsBtn")].forEach((btn) => {
-      const altIndex = parseInt(btn.getAttribute("alt"), 10);
-      const row = regularRows[altIndex];
-      if (!row) return;
-      const input = row.querySelector("input.cRadio, input.cCheck");
-      if (!input) return;
-      const value = input.getAttribute("value");
-      const p = btn.querySelector(".rs-ht p");
-      if (p && !p.querySelector(".qa-code")) {
+      [...btnContainer.querySelectorAll(".rsBtn")].forEach((btn) => {
+        const altIndex = parseInt(btn.getAttribute("alt"), 10);
+        const row = regularRows[altIndex];
+        if (!row) return;
+        const input = row.querySelector("input.cRadio, input.cCheck");
+        if (!input) return;
+        const value = input.getAttribute("value");
+        const p = btn.querySelector(".rs-ht p");
+        if (p && !p.querySelector(".qa-code")) {
+          const span = document.createElement("span");
+          span.className = "qa-code";
+          span.textContent = `[${value}]`;
+          p.prepend(span);
+        }
+      });
+
+      const openRow = underlyingTable.querySelector("tr.rsRowOpen");
+      if (!openRow) return;
+      const valueEl = openRow.querySelector("td.cCellRowText .cValue");
+      if (!valueEl) return;
+      const value = valueEl.innerText.trim();
+      const openPre = btnContainer.querySelector(".rsBtnOpenPre p");
+      if (openPre && !openPre.querySelector(".qa-code")) {
         const span = document.createElement("span");
         span.className = "qa-code";
         span.textContent = `[${value}]`;
-        p.prepend(span);
+        openPre.prepend(span);
       }
     });
-
-    const openRow = underlyingTable.querySelector("tr.rsRowOpen");
-    if (!openRow) return;
-    const valueEl = openRow.querySelector("td.cCellRowText .cValue");
-    if (!valueEl) return;
-    const value = valueEl.innerText.trim();
-    const openPre = btnContainer.querySelector(".rsBtnOpenPre p");
-    if (openPre && !openPre.querySelector(".qa-code")) {
-      const span = document.createElement("span");
-      span.className = "qa-code";
-      span.textContent = `[${value}]`;
-      openPre.prepend(span);
-    }
-  });
 
   // --- Carousel scale buttons ---
   // .rsBtn elements are the clickable scale options, alt attr is 0-based index
@@ -305,8 +310,8 @@ function addAnswerForMeButton() {
       if (e.key === "ArrowLeft") {
         e.preventDefault();
         const back =
-          document.querySelector(".buttonBack") ||
-          document.querySelector("#btnPrevious2") ||
+          document.querySelector(".buttonPrevious") ||
+          document.querySelector("#btnPrevious") ||
           document.querySelector('[name="back"]');
         if (back) back.click();
       }
@@ -511,8 +516,9 @@ function captureCarouselAnswer(clickedBtn) {
 // CAPTURE ANSWERS
 // ===============================
 function captureCurrentAnswers(tables) {
-  const toProcess =
-    tables || [...document.querySelectorAll(".cTABLEContainQues[id]")];
+  const toProcess = tables || [
+    ...document.querySelectorAll(".cTABLEContainQues[id]"),
+  ];
   toProcess.forEach((table) => {
     const qid = table.getAttribute("id");
     const entry = { qid, answers: [] };
@@ -575,7 +581,9 @@ function captureCurrentAnswers(tables) {
         ?.innerText.replace(/^\[.*?\]/, "")
         .trim();
 
-      const colHeaders = [...table.querySelectorAll('th.cCellHeader[id^="h_"]')];
+      const colHeaders = [
+        ...table.querySelectorAll('th.cCellHeader[id^="h_"]'),
+      ];
       const selections = checkedInRow.map((cb) => {
         const colIndex = allCheckboxesInRow.indexOf(cb);
         const colHeader = colHeaders[colIndex]
@@ -652,18 +660,111 @@ function renderSidebar() {
     return;
   }
 
+  const activeQid =
+    document.querySelector(".cTABLEContainQues[id]")?.getAttribute("id") ??
+    null;
+
   list.innerHTML = window.qaAnswerHistory
-    .map(
-      (entry) => `
+    .map((entry) => {
+      const isCurrent = entry.qid === activeQid;
+      return `
     <div class="qa-history-entry">
-      <div class="qa-history-qid">${entry.qid}</div>
+      <div class="qa-history-qid${isCurrent ? " qa-history-qid--current" : ""}"${isCurrent ? "" : ` title="Click to navigate back to this question (clears forward history)"`}>${entry.qid}</div>
       ${entry.answers
         .map((a) => `<div class="qa-history-answer">${a}</div>`)
         .join("")}
     </div>
-  `,
-    )
+  `;
+    })
     .join("");
+}
+
+// ===============================
+// NAVIGATION TOAST
+// ===============================
+function showNavToast(targetQid, onStop) {
+  const existing = document.getElementById("qa-nav-toast");
+  if (existing) existing.remove();
+  const toast = document.createElement("div");
+  toast.id = "qa-nav-toast";
+  toast.innerHTML = `
+    <div id="qa-nav-toast-msg">Navigating to <strong>${targetQid}</strong>&hellip; please stand by</div>
+    <button id="qa-nav-toast-stop">Stop</button>
+  `;
+  document.body.appendChild(toast);
+  document.getElementById("qa-nav-toast-stop").addEventListener("click", () => {
+    toast.remove();
+    onStop();
+  });
+  return toast;
+}
+
+function navigateBackToQuestion(targetQid) {
+  const currentQid = () =>
+    document.querySelector(".cTABLEContainQues[id]")?.getAttribute("id") ??
+    null;
+
+  if (currentQid() === targetQid) return;
+
+  let cancelled = false;
+  const toast = showNavToast(targetQid, () => {
+    cancelled = true;
+  });
+
+  let lastSeenQid = currentQid();
+  let lastClickTime = 0;
+  let stuckSince = null;
+
+  const interval = setInterval(() => {
+    if (cancelled) {
+      clearInterval(interval);
+      toast.remove();
+      return;
+    }
+
+    const current = currentQid();
+
+    if (current === targetQid) {
+      clearInterval(interval);
+      toast.remove();
+      const targetIndex = window.qaAnswerHistory.findIndex(
+        (e) => e.qid === targetQid,
+      );
+      if (targetIndex !== -1) {
+        window.qaAnswerHistory = window.qaAnswerHistory.slice(
+          0,
+          targetIndex + 1,
+        );
+        renderSidebar();
+      }
+      return;
+    }
+
+    const backBtn =
+      document.querySelector(".buttonPrevious") ||
+      document.querySelector("#btnPrevious") ||
+      document.querySelector('[name="back"]');
+
+    if (!backBtn || backBtn.disabled) {
+      if (!stuckSince) stuckSince = Date.now();
+      if (Date.now() - stuckSince > 4000) {
+        clearInterval(interval);
+        toast.remove();
+      }
+      return;
+    }
+    stuckSince = null;
+
+    const now = Date.now();
+    const qidChanged = current !== lastSeenQid;
+    const timeoutElapsed = now - lastClickTime > 500;
+
+    if (qidChanged || timeoutElapsed) {
+      lastSeenQid = current;
+      lastClickTime = now;
+      backBtn.click();
+    }
+  }, 100);
 }
 
 function buildHistorySidebar() {
@@ -698,7 +799,8 @@ function buildHistorySidebar() {
     - Dummy backgrounds (prefix dummy QID's with 'HID_')\n
     - Answer for me button (answer question and auto next)\n
     - CTRL/ COMMAND + right arrow (answer question and auto next)\n
-    - CTRL/ COMMAND + left arrow (go back to previous question)`,
+    - CTRL/ COMMAND + left arrow (go back to previous question)\n
+    - Click a QID in history to navigate back (clears forward history)`,
   );
   document.querySelector("#qa-sidebar-header").appendChild(helpIcon);
 
@@ -718,6 +820,39 @@ function buildHistorySidebar() {
     captureCurrentAnswers();
     sidebar.classList.toggle("open");
   });
+
+  document.getElementById("qa-history-list").addEventListener("click", (e) => {
+    const qidEl = e.target.closest(".qa-history-qid");
+    if (!qidEl || qidEl.classList.contains("qa-history-qid--current")) return;
+    navigateBackToQuestion(qidEl.textContent.trim());
+  });
+}
+
+// ===============================
+// BACK BUTTON WATCHER
+// ===============================
+function initBackButtonWatcher() {
+  document.addEventListener(
+    "click",
+    (e) => {
+      const backBtn = e.target.closest(
+        ".buttonPrevious, #btnPrevious, [name='back']",
+      );
+      if (!backBtn) return;
+      const current = document
+        .querySelector(".cTABLEContainQues[id]")
+        ?.getAttribute("id");
+      if (!current) return;
+      const idx = window.qaAnswerHistory.findIndex(
+        (entry) => entry.qid === current,
+      );
+      if (idx !== -1) {
+        window.qaAnswerHistory = window.qaAnswerHistory.slice(0, idx);
+        renderSidebar();
+      }
+    },
+    true,
+  );
 }
 
 // ===============================
@@ -754,8 +889,6 @@ function initClickWatcher() {
       if (carouselBtn) {
         captureCarouselAnswer(carouselBtn);
       }
-
-
     },
     true,
   );
@@ -781,6 +914,7 @@ function init() {
     waitAndApply();
     buildHistorySidebar();
     initNextButtonWatcher();
+    initBackButtonWatcher();
     initClickWatcher();
   }
 }
